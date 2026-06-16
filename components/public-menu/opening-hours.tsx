@@ -1,0 +1,28 @@
+import { CalendarDays } from "lucide-react";
+import type { OpeningHours as OpeningHoursType } from "@/types/menu";
+import { formatWeeklyOpeningHours } from "@/lib/menu-utils";
+
+type OpeningHoursProps = {
+  openingHours: OpeningHoursType;
+};
+
+export function OpeningHours({ openingHours }: OpeningHoursProps) {
+  const weeklyHours = formatWeeklyOpeningHours(openingHours);
+
+  return (
+    <section className="rounded-lg border border-line bg-white p-4 shadow-sm">
+      <div className="mb-3 flex items-center gap-2">
+        <CalendarDays aria-hidden="true" className="h-5 w-5 text-leaf" />
+        <h2 className="text-base font-black text-ink">Horário de atendimento</h2>
+      </div>
+      <dl className="grid gap-2 text-sm">
+        {weeklyHours.map((item) => (
+          <div key={item.day} className="flex items-center justify-between gap-4">
+            <dt className="font-semibold text-ink/70">{item.day}</dt>
+            <dd className="text-right font-bold text-ink">{item.label}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+  );
+}
