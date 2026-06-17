@@ -1,0 +1,21 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function ownsRestaurant(restaurantId) {
+      return signedIn()
+        && firestore.exists(/databases/(default)/documents/restaurants/$(restaurantId))
+        && firestore.get(/databases/(default)/documents/restaurants/$(restaurantId)).data.ownerId == request.auth.uid;
+    }
+
+    match /restaurants/{restaurantId}/products/{fileName} {
+      allow read: if true;
+      allow write: if ownsRestaurant(restaurantId)
+        && request.resource.size < 5 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
+    }
+  }
+}

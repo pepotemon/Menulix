@@ -1,23 +1,48 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
 
-    // Restaurantes — leitura pública, escrita apenas autenticada (Fase 2)
+    function ownsRestaurant(restaurantId) {
+      return signedIn()
+        && exists(/databases/$(database)/documents/restaurants/$(restaurantId))
+        && get(/databases/$(database)/documents/restaurants/$(restaurantId)).data.ownerId == request.auth.uid;
+    }
+
+    // Restaurantes: leitura publica, escrita apenas pelo dono autenticado.
     match /restaurants/{restaurantId} {
       allow read: if true;
-      allow write: if false;
+      allow create: if signedIn() && request.resource.data.ownerId == request.auth.uid;
+      allow update: if signedIn()
+        && resource.data.ownerId == request.auth.uid
+        && request.resource.data.ownerId == resource.data.ownerId;
+      allow delete: if false;
     }
 
-    // Categorias — leitura pública
+    // Categorias: leitura publica, escrita pelo dono do restaurante.
     match /categories/{categoryId} {
       allow read: if true;
-      allow write: if false;
+      allow create: if signedIn()
+        && request.resource.data.restaurantId is string
+        && ownsRestaurant(request.resource.data.restaurantId);
+      allow update: if signedIn()
+        && resource.data.restaurantId == request.resource.data.restaurantId
+        && ownsRestaurant(resource.data.restaurantId);
+      allow delete: if signedIn() && ownsRestaurant(resource.data.restaurantId);
     }
 
-    // Produtos — leitura pública
+    // Produtos: leitura publica, escrita pelo dono do restaurante.
     match /products/{productId} {
       allow read: if true;
-      allow write: if false;
+      allow create: if signedIn()
+        && request.resource.data.restaurantId is string
+        && ownsRestaurant(request.resource.data.restaurantId);
+      allow update: if signedIn()
+        && resource.data.restaurantId == request.resource.data.restaurantId
+        && ownsRestaurant(resource.data.restaurantId);
+      allow delete: if signedIn() && ownsRestaurant(resource.data.restaurantId);
     }
   }
 }

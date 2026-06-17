@@ -23,6 +23,7 @@ export type RestaurantTheme = {
 
 export type Restaurant = {
   id: string;
+  ownerId?: string;
   slug: string;
   name: string;
   description: string;
@@ -67,4 +68,36 @@ export type PublicMenu = {
   restaurant: Restaurant;
   categories: Category[];
   products: Product[];
+};
+
+export type RestaurantFormInput = {
+  name: string;
+  slug: string;
+  description: string;
+  logoUrl: string;
+  bannerUrl: string;
+  whatsapp: string;
+  instagram: string;
+  address: string;
+  city: string;
+  state: string;
+  isActive: boolean;
+  openingHours: OpeningHours;
+};
+
+export type CategoryFormInput = {
+  name: string;
+  order: number;
+  isActive: boolean;
+};
+
+export type ProductFormInput = {
+  name: string;
+  description: string;
+  price: number;
+  categoryId: string;
+  imageUrl: string;
+  isAvailable: boolean;
+  isFeatured: boolean;
+  order: number;
 };

@@ -31,6 +31,103 @@ O que isso afeta.
 
 ---
 
+### [2026-06-17] Fase 2 concluída — painel admin simples
+
+**Fase**: FASE 2
+**Tipo**: feat
+**Arquivos criados/modificados**:
+- `app/admin/*` — login, dashboard "Meu cardápio", restaurante, categorias e produtos
+- `components/admin/*` — Auth, dados admin, layout, cabeçalhos e link/QR
+- `lib/admin-firestore.ts` — camada de CRUD e upload
+- `types/menu.ts` — ownership e tipos de formulário
+- `firebase.json`, `firestore.rules`, `storage.rules` — regras de Firestore e Storage
+- `package.json`, `package-lock.json` — dependência `qrcode`
+- `docs-obsidian/*`, `AGENTS.md` — second brain atualizado
+
+**O que mudou**:
+Fase 2 foi encerrada em código com painel administrativo simples para usuários não técnicos:
+login, edição do restaurante, categorias, produtos, upload de imagem, link público e QR Code.
+
+**Por que**:
+O restaurante precisa conseguir administrar o cardápio sem enfrentar um painel complexo.
+
+**Impacto**:
+- Próxima fase do produto passa a ser Fase 3 — personalização visual
+- Build local validado
+- Deploy das rules ainda exige `firebase login --reauth` antes de publicar no Firebase
+
+---
+
+### [2026-06-17] Fase 2 — CRUD admin, upload, QR Code e rules por ownership
+
+**Fase**: FASE 2
+**Tipo**: feat
+**Arquivos criados/modificados**:
+- `types/menu.ts` — adiciona `ownerId` e tipos de formulário admin
+- `lib/firebase.ts` — exporta Firebase Storage
+- `lib/admin-firestore.ts` — CRUD admin, criação automática de restaurante e upload de imagem
+- `components/admin/admin-data-provider.tsx` — carrega restaurante/categorias/produtos do usuário
+- `components/admin/public-link-panel.tsx` — copiar link público e baixar QR Code
+- `components/admin/admin-shell.tsx` — navegação simplificada para "Meu cardápio"
+- `app/admin/page.tsx` — dashboard simples com ações principais, status, link e QR
+- `app/admin/restaurante/page.tsx` — formulário de informações do restaurante
+- `app/admin/categorias/page.tsx` — CRUD de categorias
+- `app/admin/produtos/page.tsx` — CRUD de produtos com upload de imagem
+- `firestore.rules` — escrita por `ownerId`
+- `storage.rules` — upload público/privado de imagens por restaurante
+- `firebase.json` — adiciona configuração de Storage Rules
+- `package.json`, `package-lock.json` — adiciona `qrcode` e `@types/qrcode`
+- `docs-obsidian/02_Architecture.md`, `03_Decisions.md`, `06_Changelog.md`
+
+**O que mudou**:
+O painel admin deixou de ser placeholder e passou a permitir administrar o cardápio
+de forma simples: editar informações, categorias, produtos, imagens, link público
+e QR Code. A arquitetura usa `ownerId` para isolar o restaurante do usuário logado.
+
+**Por que**:
+Usuários não técnicos precisam de uma experiência direta, com ações claras e sem
+conceitos internos de SaaS, tenant ou banco de dados.
+
+**Impacto**:
+- Fase 2 está implementada localmente em código
+- Escrita em Firestore e Storage depende do deploy das rules
+- Deploy/dry-run das rules ficou pendente porque o Firebase CLI pediu `firebase login --reauth`
+
+---
+
+### [2026-06-17] Fase 2 iniciada — base do painel admin com Firebase Auth
+
+**Fase**: FASE 2
+**Tipo**: feat
+**Arquivos criados/modificados**:
+- `lib/firebase.ts` — exporta `auth` além de `db`
+- `components/admin/auth-provider.tsx` — contexto de sessão Firebase Auth
+- `components/admin/admin-shell.tsx` — layout protegido e navegação do painel
+- `components/admin/admin-page-header.tsx` — cabeçalho padrão das telas admin
+- `components/admin/placeholder-panel.tsx` — painel de próximas etapas
+- `app/admin/layout.tsx` — provider e shell do admin
+- `app/admin/login/page.tsx` — login por e-mail/senha
+- `app/admin/page.tsx` — dashboard inicial
+- `app/admin/restaurante/page.tsx` — base do CRUD de restaurante
+- `app/admin/categorias/page.tsx` — base do CRUD de categorias
+- `app/admin/produtos/page.tsx` — base do CRUD de produtos
+- `AGENTS.md`, `docs-obsidian/00_Index.md`, `02_Architecture.md`, `03_Decisions.md`
+
+**O que mudou**:
+Fase 2 foi iniciada oficialmente. O projeto agora possui rotas base para o painel
+administrativo, login com Firebase Auth e proteção client-side das rotas `/admin`.
+
+**Por que**:
+O CRUD da Fase 2 precisa de uma base autenticada e navegável antes das telas de
+escrita em Firestore.
+
+**Impacto**:
+- `/admin/login` permite autenticação com Firebase Auth
+- `/admin` e subrotas exigem usuário autenticado no cliente
+- Firestore Rules seguem com escrita bloqueada até a etapa de CRUD e ownership
+
+---
+
 ### [2026-06-16] Integração Firebase — Firestore conectado
 
 **Fase**: FASE 1 (complemento)

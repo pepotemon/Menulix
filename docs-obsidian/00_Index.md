@@ -25,9 +25,9 @@
 ## Estado Atual do Projeto
 
 ```
-Fase atual:    FASE 1 — MVP Público do Cardápio Digital ✅
-Próxima fase:  FASE 2 — Painel Administrativo
-Firebase:      Não integrado (dados mockados)
+Fase atual:    FASE 2 — Painel Administrativo ✅
+Próxima fase:  FASE 3 — Personalização visual
+Firebase:      Firestore + Auth + Storage implementados localmente
 Deploy:        Não configurado
 ```
 
@@ -36,7 +36,7 @@ Deploy:        Não configurado
 ## Fases do Projeto
 
 - [x] **FASE 1** — MVP público do cardápio digital
-- [ ] **FASE 2** — Painel administrativo básico
+- [x] **FASE 2** — Painel administrativo básico
 - [ ] **FASE 3** — Personalização visual
 - [ ] **FASE 4** — Planos e monetização
 - [ ] **FASE 5** — Pedidos por WhatsApp

@@ -1,6 +1,6 @@
 # 02 — Arquitetura Técnica
 
-> Última atualização: 2026-06-16
+> Última atualização: 2026-06-17
 > Relacionado: [[00_Index]] | [[03_Decisions]] | [[01_Project]]
 
 ---
@@ -14,9 +14,10 @@
 | Estilização | Tailwind CSS | 3.4.4 |
 | Ícones | Lucide React | 0.468.0 |
 | Runtime | React | 18.3.1 |
-| Auth (futuro) | Firebase Auth | — |
+| Auth | Firebase Auth | Fase 2 |
 | Database | Firestore | ✅ conectado (projeto: menulix-77e45) |
-| Storage | Firebase Storage | configurado (domínio no next.config) |
+| Storage | Firebase Storage | upload de imagens de produto |
+| QR Code | qrcode | geração client-side |
 | Deploy (futuro) | Vercel ou Firebase Hosting | — |
 | CLI | Firebase Tools | 15.20.0 |
 
@@ -30,10 +31,23 @@ Menulix/
 │   ├── layout.tsx               # Root layout (HTML, metadata, CSS)
 │   ├── globals.css              # CSS global + design base
 │   ├── not-found.tsx            # Página 404 global
+│   ├── admin/
+│   │   ├── layout.tsx           # AuthProvider + AdminShell
+│   │   ├── login/page.tsx       # Login Firebase Auth
+│   │   ├── page.tsx             # Meu cardápio: ações, status, link e QR
+│   │   ├── restaurante/page.tsx # CRUD de informações do restaurante
+│   │   ├── categorias/page.tsx  # CRUD de categorias
+│   │   └── produtos/page.tsx    # CRUD de produtos + upload de imagem
 │   └── [slug]/
 │       └── page.tsx             # Rota pública do restaurante
 │
 ├── components/
+│   ├── admin/                   # Componentes da fase 2
+│   │   ├── auth-provider.tsx    # Sessão Firebase Auth no cliente
+│   │   ├── admin-data-provider.tsx # Dados do restaurante autenticado
+│   │   ├── admin-shell.tsx      # Layout protegido + navegação
+│   │   ├── admin-page-header.tsx
+│   │   └── public-link-panel.tsx # Copiar link + QR Code
 │   └── public-menu/             # Componentes da fase 1
 │       ├── public-menu-page.tsx     # Layout principal
 │       ├── restaurant-header.tsx    # Hero + info
@@ -45,7 +59,10 @@ Menulix/
 │       └── inactive-restaurant.tsx  # Estado inativo
 │
 ├── lib/
-│   ├── menu-data.ts             # Dados mockados + funções de query
+│   ├── admin-firestore.ts       # CRUD admin + upload Storage
+│   ├── firebase.ts              # Firebase app, Auth, Firestore e Storage
+│   ├── firestore.ts             # Queries públicas do cardápio
+│   ├── menu-data.ts             # Dados mockados de referência
 │   └── menu-utils.ts            # Utilitários: moeda, horários, WhatsApp
 │
 ├── types/
@@ -71,6 +88,7 @@ Todos os tipos estão centralizados em `types/menu.ts`.
 ```typescript
 {
   id: string
+  ownerId?: string       // uid do Firebase Auth que administra o restaurante
   slug: string           // único, usado na URL
   name: string
   description: string
@@ -180,6 +198,23 @@ shadow-soft: 0 18px 50px rgba(0,0,0,0.12)
 
 ---
 
+## Fluxo de Admin (Fase 2)
+
+```
+1. URL: /admin/login
+2. app/admin/layout.tsx → AuthProvider + AdminShell
+3. components/admin/auth-provider.tsx → onAuthStateChanged(Firebase Auth)
+4. Login com e-mail/senha → signInWithEmailAndPassword
+5. Rotas /admin/* sem usuário → redirect client-side para /admin/login
+6. AdminDataProvider → busca/cria restaurante por ownerId
+7. Usuário autenticado → "Meu cardápio", CRUD e QR Code
+```
+
+O painel usa linguagem simples para o restaurante: "Meu cardápio", "Produtos",
+"Categorias" e "Informações". O isolamento técnico é feito por `ownerId`.
+
+---
+
 ## Geração Estática (SSG)
 
 A página `/[slug]` usa `generateStaticParams()` para pré-renderizar todas as rotas no build:
@@ -204,19 +239,39 @@ Isso garante performance máxima e funcionamento sem banco de dados em tempo de 
 Queries usam apenas filtros simples (`where`) sem índices compostos.
 Ordenação feita client-side para evitar criação de índices no Firestore.
 
+## Arquivos Admin (`lib/admin-firestore.ts`)
+
+| Função | Propósito |
+|--------|-----------|
+| `getAdminMenuData(ownerId)` | Busca/cria restaurante e carrega categorias + produtos |
+| `saveRestaurant(id, input)` | Atualiza dados públicos do restaurante |
+| `createCategory/updateCategory/deleteCategory` | CRUD de categorias |
+| `createProduct/updateProduct/deleteProduct` | CRUD de produtos |
+| `uploadProductImage(restaurantId, file)` | Upload para Firebase Storage |
+| `slugifyRestaurantName(value)` | Normaliza slug editável |
+
 ## Coleções no Firestore
 
 | Coleção | Documentos | Isolamento |
 |---------|-----------|-----------|
-| `restaurants` | Um por restaurante | Por documento |
+| `restaurants` | Um por restaurante | `ownerId` |
 | `categories` | Todas as categorias | Por `restaurantId` |
 | `products` | Todos os produtos | Por `restaurantId` |
 
 ## Regras de Segurança (`firestore.rules`)
 
 - Leitura pública em todas as coleções
-- Escrita bloqueada (será liberada por Auth na Fase 2)
-- Gerenciadas via Firebase CLI: `firebase deploy --only firestore:rules`
+- Escrita de `restaurants` apenas quando `ownerId == request.auth.uid`
+- Escrita de `categories` e `products` apenas quando o restaurante pertence ao usuário
+- Delete de restaurante bloqueado
+- Deploy pendente de reautenticação do Firebase CLI
+
+## Regras de Storage (`storage.rules`)
+
+- Leitura pública para imagens em `restaurants/{restaurantId}/products/{fileName}`
+- Escrita apenas pelo dono autenticado do restaurante
+- Limite de 5 MB por arquivo
+- Apenas `contentType` de imagem
 
 ## Utilitários Principais (`lib/menu-utils.ts`)
 
@@ -245,12 +300,12 @@ URL gerada: `https://wa.me/[number]?text=[encoded_message]`
 `next.config.mjs` permite imagens remotas de:
 - `images.unsplash.com` (usado nos dados mockados)
 
-Para produção, adicionar domínio do Firebase Storage.
+Firebase Storage já está permitido em `next.config.mjs`.
 
 ---
 
 ## Preparação Multi-Tenant
 
-Cada `Category` e `Product` tem `restaurantId` como chave estrangeira. Isso garante isolamento de dados por tenant ao migrar para Firestore.
-
-Regras futuras do Firestore devem verificar `restaurantId === auth.uid` ou similar.
+Cada `Category` e `Product` tem `restaurantId` como chave estrangeira.
+Cada `Restaurant` administrável tem `ownerId`, que aponta para o `uid` do Firebase Auth.
+As regras verificam ownership antes de permitir escrita.

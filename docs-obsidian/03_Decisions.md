@@ -146,6 +146,47 @@ Cada decisão usa o formato:
 
 ---
 
+## [DEC-011] Proteção inicial do admin com Firebase Auth no cliente
+
+**Data**: 2026-06-17
+**Contexto**: A Fase 2 precisa iniciar o painel administrativo sem ainda introduzir sessões server-side ou cookies customizados.
+**Decisão**: Usar Firebase Auth no cliente com `onAuthStateChanged`, `signInWithEmailAndPassword` e redirecionamento client-side para proteger a navegação inicial de `/admin`.
+**Alternativas descartadas**: Middleware server-side com session cookie do Firebase Admin; rota separada fora de `/admin` para login; painel temporariamente sem proteção.
+**Consequências**:
+- Entrega inicial mais simples e alinhada ao Firebase client SDK já instalado
+- Base suficiente para construir as telas de CRUD da Fase 2
+- Firestore Rules continuam sendo a proteção real de escrita
+- Se houver necessidade de SSR autenticado, a arquitetura pode evoluir para session cookies com Firebase Admin
+
+---
+
+## [DEC-012] Ownership por `ownerId` no restaurante
+
+**Data**: 2026-06-17
+**Contexto**: O painel admin precisa isolar dados por restaurante sem expor conceitos técnicos para o usuário.
+**Decisão**: Cada documento em `restaurants` passa a ter `ownerId`, preenchido com o `uid` do Firebase Auth. Categorias e produtos continuam vinculados por `restaurantId`.
+**Alternativas descartadas**: Usar `restaurant.id == auth.uid`; criar coleção intermediária de permissões; permitir escrita autenticada sem ownership.
+**Consequências**:
+- Um usuário autenticado administra apenas restaurantes onde `ownerId == uid`
+- Firestore Rules conseguem validar escrita de restaurantes, categorias e produtos
+- Mantém liberdade para ter IDs de restaurante independentes do usuário
+- Futuramente permite múltiplos usuários por restaurante com uma coleção de permissões
+
+---
+
+## [DEC-013] QR Code client-side com `qrcode`
+
+**Data**: 2026-06-17
+**Contexto**: A Fase 2 precisa gerar QR Code para o link público do cardápio.
+**Decisão**: Usar a dependência `qrcode` no cliente para gerar Data URL baixável.
+**Alternativas descartadas**: API externa de QR Code; implementar algoritmo QR manualmente; gerar QR no servidor.
+**Consequências**:
+- QR Code funciona sem serviço externo
+- Download é simples no navegador
+- Adiciona uma dependência pequena ao bundle do admin
+
+---
+
 ## Decisões Pendentes
 
 - [ ] Armazenamento de preços: float vs centavos inteiros no Firestore
