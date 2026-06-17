@@ -18,6 +18,7 @@
 | Database | Firestore | ✅ conectado (projeto: menulix-77e45) |
 | Storage | Firebase Storage | upload de imagens de produto |
 | QR Code | qrcode | geração client-side |
+| i18n | Dicionário local | PT-BR + ES |
 | Deploy (futuro) | Vercel ou Firebase Hosting | — |
 | CLI | Firebase Tools | 15.20.0 |
 
@@ -42,6 +43,8 @@ Menulix/
 │       └── page.tsx             # Rota pública do restaurante
 │
 ├── components/
+│   ├── language-provider.tsx     # Estado global de idioma
+│   ├── language-switcher.tsx     # Botão PT/ES fixo
 │   ├── admin/                   # Componentes da fase 2
 │   │   ├── auth-provider.tsx    # Sessão Firebase Auth no cliente
 │   │   ├── admin-data-provider.tsx # Dados do restaurante autenticado
@@ -62,6 +65,7 @@ Menulix/
 │   ├── admin-firestore.ts       # CRUD admin + upload Storage
 │   ├── firebase.ts              # Firebase app, Auth, Firestore e Storage
 │   ├── firestore.ts             # Queries públicas do cardápio
+│   ├── i18n.ts                  # Dicionário PT/ES e tipos de tradução
 │   ├── menu-data.ts             # Dados mockados de referência
 │   └── menu-utils.ts            # Utilitários: moeda, horários, WhatsApp
 │
@@ -79,6 +83,18 @@ TypeScript está configurado com `strict: true`. Path aliases:
 - `@/*` → raiz do projeto
 
 Todos os tipos estão centralizados em `types/menu.ts`.
+
+---
+
+## Internacionalização (PT/ES)
+
+- Dicionário central: `lib/i18n.ts`
+- Provider global: `components/language-provider.tsx`
+- Seletor visual: `components/language-switcher.tsx`
+- Idioma padrão: `pt`
+- Idioma escolhido fica salvo em `localStorage`
+- Todo texto fixo novo de UI deve ser cadastrado nas chaves `pt` e `es`
+- Dados de restaurante, categorias e produtos não são traduzidos automaticamente
 
 ---
 
@@ -279,10 +295,10 @@ Ordenação feita client-side para evitar criação de índices no Firestore.
 |--------|-----------|
 | `formatCurrencyBRL(value)` | "R$ 29,90" |
 | `isRestaurantOpen(hours)` | Boolean baseado no horário atual |
-| `getTodaysOpeningLabel(hours)` | "18:00 às 23:00" ou "Fechado hoje" |
-| `buildWhatsappUrl(number, name)` | URL wa.me com mensagem pré-formatada |
+| `getTodaysOpeningLabel(hours, date, language)` | Label traduzido de horário do dia |
+| `buildWhatsappUrl(number, name, language)` | URL wa.me com mensagem traduzida |
 | `normalizeWhatsappNumber(num)` | Remove formatação, só dígitos |
-| `formatWeeklyOpeningHours(hours)` | Array para exibição na sidebar |
+| `formatWeeklyOpeningHours(hours, language)` | Array traduzido para exibição na sidebar |
 
 ---
 

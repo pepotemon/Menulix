@@ -9,6 +9,7 @@ import {
   useState
 } from "react";
 import { useAuth } from "@/components/admin/auth-provider";
+import { useI18n } from "@/components/language-provider";
 import { getAdminMenuData } from "@/lib/admin-firestore";
 import type { Category, Product, Restaurant } from "@/types/menu";
 
@@ -31,6 +32,7 @@ export function AdminDataProvider({
   children
 }: AdminDataProviderProps): JSX.Element {
   const { user, isLoading: isAuthLoading } = useAuth();
+  const { t } = useI18n();
   const [restaurant, setRestaurant] = useState<Restaurant | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
@@ -55,12 +57,12 @@ export function AdminDataProvider({
       setProducts(data.products);
     } catch {
       setErrorMessage(
-        "Não foi possível carregar seu cardápio. Tente novamente em alguns instantes."
+        t("admin.data.loadError")
       );
     } finally {
       setIsLoading(false);
     }
-  }, [user]);
+  }, [t, user]);
 
   useEffect(() => {
     if (!isAuthLoading) {

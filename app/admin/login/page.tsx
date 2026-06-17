@@ -4,10 +4,12 @@ import { KeyRound, Mail } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
 import { useAuth } from "@/components/admin/auth-provider";
+import { useI18n } from "@/components/language-provider";
 
 function LoginForm(): JSX.Element {
   const router = useRouter();
   const { user, isLoading, signIn } = useAuth();
+  const { t } = useI18n();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -28,7 +30,7 @@ function LoginForm(): JSX.Element {
       await signIn(email, password);
       router.replace("/admin");
     } catch {
-      setErrorMessage("Não foi possível entrar. Verifique e-mail e senha.");
+      setErrorMessage(t("admin.login.error"));
     } finally {
       setIsSubmitting(false);
     }
@@ -39,17 +41,19 @@ function LoginForm(): JSX.Element {
       <section className="w-full max-w-md rounded-md border border-line bg-white p-6 shadow-soft">
         <div>
           <p className="text-xs font-bold uppercase tracking-normal text-leaf">
-            Menulix Admin
+            {t("admin.login.badge")}
           </p>
-          <h1 className="mt-2 text-2xl font-black">Entrar no painel</h1>
+          <h1 className="mt-2 text-2xl font-black">{t("admin.login.title")}</h1>
           <p className="mt-2 text-sm leading-6 text-ink/68">
-            Acesse com o e-mail do restaurante para administrar o cardápio.
+            {t("admin.login.description")}
           </p>
         </div>
 
         <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
           <label className="block">
-            <span className="text-sm font-bold text-ink">E-mail</span>
+            <span className="text-sm font-bold text-ink">
+              {t("admin.login.email")}
+            </span>
             <span className="mt-2 flex min-h-12 items-center gap-2 rounded-md border border-line bg-cream px-3 focus-within:border-leaf">
               <Mail size={18} className="text-ink/50" />
               <input
@@ -59,13 +63,15 @@ function LoginForm(): JSX.Element {
                 required
                 autoComplete="email"
                 className="w-full bg-transparent text-sm font-semibold text-ink outline-none placeholder:text-ink/50"
-                placeholder="restaurante@email.com"
+                placeholder={t("admin.login.emailPlaceholder")}
               />
             </span>
           </label>
 
           <label className="block">
-            <span className="text-sm font-bold text-ink">Senha</span>
+            <span className="text-sm font-bold text-ink">
+              {t("admin.login.password")}
+            </span>
             <span className="mt-2 flex min-h-12 items-center gap-2 rounded-md border border-line bg-cream px-3 focus-within:border-leaf">
               <KeyRound size={18} className="text-ink/50" />
               <input
@@ -75,7 +81,7 @@ function LoginForm(): JSX.Element {
                 required
                 autoComplete="current-password"
                 className="w-full bg-transparent text-sm font-semibold text-ink outline-none placeholder:text-ink/50"
-                placeholder="Sua senha"
+                placeholder={t("admin.login.passwordPlaceholder")}
               />
             </span>
           </label>
@@ -91,7 +97,7 @@ function LoginForm(): JSX.Element {
             disabled={isSubmitting || isLoading}
             className="min-h-12 w-full rounded-md bg-leaf px-4 py-3 text-sm font-black text-white transition hover:bg-ink disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {isSubmitting ? "Entrando..." : "Entrar"}
+            {isSubmitting ? t("admin.login.submitting") : t("admin.login.submit")}
           </button>
         </form>
       </section>

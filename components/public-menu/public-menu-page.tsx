@@ -1,4 +1,7 @@
+"use client";
+
 import type { PublicMenu } from "@/types/menu";
+import { useI18n } from "@/components/language-provider";
 import { CategorySection } from "@/components/public-menu/category-section";
 import { OpeningHours } from "@/components/public-menu/opening-hours";
 import { RestaurantHeader } from "@/components/public-menu/restaurant-header";
@@ -9,6 +12,7 @@ type PublicMenuPageProps = {
 };
 
 export function PublicMenuPage({ menu }: PublicMenuPageProps) {
+  const { t } = useI18n();
   const { restaurant, categories, products } = menu;
 
   return (
@@ -17,7 +21,7 @@ export function PublicMenuPage({ menu }: PublicMenuPageProps) {
 
       <div className="sticky top-0 z-10 border-b border-line bg-cream/95 backdrop-blur">
         <nav
-          aria-label="Categorias"
+          aria-label={t("public.category.nav")}
           className="mx-auto flex max-w-6xl gap-2 overflow-x-auto px-4 py-3 sm:px-6 lg:px-8"
         >
           {categories.map((category) => (
@@ -46,10 +50,11 @@ export function PublicMenuPage({ menu }: PublicMenuPageProps) {
         <aside className="space-y-4 lg:sticky lg:top-20 lg:self-start">
           <OpeningHours openingHours={restaurant.openingHours} />
           <section className="rounded-lg border border-line bg-white p-4 shadow-sm">
-            <h2 className="text-base font-black text-ink">Fazer pedido</h2>
+            <h2 className="text-base font-black text-ink">
+              {t("public.order.title")}
+            </h2>
             <p className="mb-4 mt-2 text-sm leading-relaxed text-ink/68">
-              Fale direto com o restaurante pelo WhatsApp para confirmar
-              disponibilidade, entrega e pagamento.
+              {t("public.order.description")}
             </p>
             <WhatsappButton
               phone={restaurant.whatsapp}

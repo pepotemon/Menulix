@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useState } from "react";
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { useAdminData } from "@/components/admin/admin-data-provider";
+import { useI18n } from "@/components/language-provider";
 import { saveRestaurant, slugifyRestaurantName } from "@/lib/admin-firestore";
 import type { OpeningHours, RestaurantFormInput } from "@/types/menu";
 
@@ -52,6 +53,7 @@ function buildOpeningHours(
 
 export default function AdminRestaurantPage(): JSX.Element {
   const { restaurant, isLoading, errorMessage, refresh } = useAdminData();
+  const { t } = useI18n();
   const [form, setForm] = useState<RestaurantFormInput>(emptyForm);
   const [weekdaysOpen, setWeekdaysOpen] = useState("");
   const [weekdaysClose, setWeekdaysClose] = useState("");
@@ -108,9 +110,9 @@ export default function AdminRestaurantPage(): JSX.Element {
         )
       });
       await refresh();
-      setStatusMessage("Informações salvas com sucesso.");
+      setStatusMessage(t("admin.restaurant.saved"));
     } catch {
-      setStatusMessage("Não foi possível salvar. Confira os dados e tente novamente.");
+      setStatusMessage(t("admin.restaurant.saveError"));
     } finally {
       setIsSaving(false);
     }
@@ -119,8 +121,8 @@ export default function AdminRestaurantPage(): JSX.Element {
   if (isLoading || !restaurant) {
     return (
       <AdminPageHeader
-        title="Informações"
-        description={errorMessage || "Carregando dados do restaurante."}
+        title={t("admin.restaurant.title")}
+        description={errorMessage || t("admin.restaurant.loading")}
       />
     );
   }
@@ -128,8 +130,8 @@ export default function AdminRestaurantPage(): JSX.Element {
   return (
     <>
       <AdminPageHeader
-        title="Informações"
-        description="Mantenha os dados principais do seu cardápio sempre atualizados."
+        title={t("admin.restaurant.title")}
+        description={t("admin.restaurant.description")}
       />
 
       <form
@@ -139,10 +141,10 @@ export default function AdminRestaurantPage(): JSX.Element {
         <label className="flex items-center justify-between gap-4 rounded-md border border-line bg-cream px-4 py-3">
           <span>
             <span className="block text-sm font-black text-ink">
-              Cardápio publicado
+              {t("admin.restaurant.published")}
             </span>
             <span className="block text-xs font-semibold text-ink/50">
-              Desative se ainda estiver preparando o menu.
+              {t("admin.restaurant.publishedHelp")}
             </span>
           </span>
           <input
@@ -160,7 +162,9 @@ export default function AdminRestaurantPage(): JSX.Element {
 
         <div className="grid gap-4 md:grid-cols-2">
           <label className="block">
-            <span className="text-sm font-bold text-ink">Nome do restaurante</span>
+            <span className="text-sm font-bold text-ink">
+              {t("admin.restaurant.name")}
+            </span>
             <input
               value={form.name}
               onChange={(event) =>
@@ -172,7 +176,9 @@ export default function AdminRestaurantPage(): JSX.Element {
           </label>
 
           <label className="block">
-            <span className="text-sm font-bold text-ink">Link curto</span>
+            <span className="text-sm font-bold text-ink">
+              {t("admin.restaurant.slug")}
+            </span>
             <input
               value={form.slug}
               onChange={(event) =>
@@ -185,7 +191,9 @@ export default function AdminRestaurantPage(): JSX.Element {
         </div>
 
         <label className="block">
-          <span className="text-sm font-bold text-ink">Descrição</span>
+          <span className="text-sm font-bold text-ink">
+            {t("admin.restaurant.descriptionLabel")}
+          </span>
           <textarea
             value={form.description}
             onChange={(event) =>
@@ -201,7 +209,9 @@ export default function AdminRestaurantPage(): JSX.Element {
 
         <div className="grid gap-4 md:grid-cols-2">
           <label className="block">
-            <span className="text-sm font-bold text-ink">WhatsApp</span>
+            <span className="text-sm font-bold text-ink">
+              {t("admin.restaurant.whatsapp")}
+            </span>
             <input
               value={form.whatsapp}
               onChange={(event) =>
@@ -216,7 +226,9 @@ export default function AdminRestaurantPage(): JSX.Element {
           </label>
 
           <label className="block">
-            <span className="text-sm font-bold text-ink">Instagram</span>
+            <span className="text-sm font-bold text-ink">
+              {t("admin.restaurant.instagram")}
+            </span>
             <input
               value={form.instagram}
               onChange={(event) =>
@@ -233,7 +245,9 @@ export default function AdminRestaurantPage(): JSX.Element {
 
         <div className="grid gap-4 md:grid-cols-3">
           <label className="block md:col-span-3">
-            <span className="text-sm font-bold text-ink">Endereço</span>
+            <span className="text-sm font-bold text-ink">
+              {t("admin.restaurant.address")}
+            </span>
             <input
               value={form.address}
               onChange={(event) =>
@@ -247,7 +261,9 @@ export default function AdminRestaurantPage(): JSX.Element {
           </label>
 
           <label className="block md:col-span-2">
-            <span className="text-sm font-bold text-ink">Cidade</span>
+            <span className="text-sm font-bold text-ink">
+              {t("admin.restaurant.city")}
+            </span>
             <input
               value={form.city}
               onChange={(event) =>
@@ -258,7 +274,9 @@ export default function AdminRestaurantPage(): JSX.Element {
           </label>
 
           <label className="block">
-            <span className="text-sm font-bold text-ink">Estado</span>
+            <span className="text-sm font-bold text-ink">
+              {t("admin.restaurant.state")}
+            </span>
             <input
               value={form.state}
               onChange={(event) =>
@@ -271,12 +289,14 @@ export default function AdminRestaurantPage(): JSX.Element {
         </div>
 
         <section className="rounded-md border border-line bg-cream p-4">
-          <h2 className="text-base font-black text-ink">Horários</h2>
+          <h2 className="text-base font-black text-ink">
+            {t("admin.restaurant.hours")}
+          </h2>
           <div className="mt-4 grid gap-4 md:grid-cols-3">
             {[
-              ["Segunda a sexta", weekdaysOpen, setWeekdaysOpen, weekdaysClose, setWeekdaysClose],
-              ["Sábado", saturdayOpen, setSaturdayOpen, saturdayClose, setSaturdayClose],
-              ["Domingo", sundayOpen, setSundayOpen, sundayClose, setSundayClose]
+              [t("admin.restaurant.weekdays"), weekdaysOpen, setWeekdaysOpen, weekdaysClose, setWeekdaysClose],
+              [t("admin.restaurant.saturday"), saturdayOpen, setSaturdayOpen, saturdayClose, setSaturdayClose],
+              [t("admin.restaurant.sunday"), sundayOpen, setSundayOpen, sundayClose, setSundayClose]
             ].map(([label, openValue, setOpen, closeValue, setClose]) => (
               <div key={label as string} className="rounded-md border border-line bg-white p-3">
                 <p className="text-sm font-black text-ink">{label as string}</p>
@@ -314,7 +334,7 @@ export default function AdminRestaurantPage(): JSX.Element {
           disabled={isSaving}
           className="min-h-12 rounded-md bg-leaf px-4 py-3 text-sm font-black text-white transition hover:bg-ink disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {isSaving ? "Salvando..." : "Salvar informações"}
+          {isSaving ? t("admin.common.saving") : t("admin.restaurant.save")}
         </button>
       </form>
     </>

@@ -1,5 +1,8 @@
+"use client";
+
 import Image from "next/image";
 import { BadgePercent, CircleSlash2 } from "lucide-react";
+import { useI18n } from "@/components/language-provider";
 import type { Product } from "@/types/menu";
 import { formatCurrencyBRL } from "@/lib/menu-utils";
 
@@ -8,6 +11,8 @@ type ProductCardProps = {
 };
 
 export function ProductCard({ product }: ProductCardProps) {
+  const { t } = useI18n();
+
   return (
     <article className="grid grid-cols-[88px_1fr] gap-3 rounded-lg border border-line bg-white p-3 shadow-sm sm:grid-cols-[120px_1fr] sm:gap-4">
       <div className="relative aspect-square overflow-hidden rounded-md bg-cream">
@@ -21,7 +26,7 @@ export function ProductCard({ product }: ProductCardProps) {
         {product.isFeatured ? (
           <div className="absolute left-2 top-2 rounded-full bg-tomato px-2 py-1 text-white">
             <BadgePercent aria-hidden="true" className="h-3.5 w-3.5" />
-            <span className="sr-only">Produto em destaque</span>
+            <span className="sr-only">{t("public.featuredSr")}</span>
           </div>
         ) : null}
       </div>
@@ -33,7 +38,7 @@ export function ProductCard({ product }: ProductCardProps) {
             {!product.isAvailable ? (
               <span className="inline-flex items-center gap-1 rounded-full bg-ink/10 px-2 py-1 text-xs font-semibold text-ink/60">
                 <CircleSlash2 aria-hidden="true" className="h-3.5 w-3.5" />
-                Indisp.
+                {t("public.unavailableShort")}
               </span>
             ) : null}
           </div>
@@ -48,7 +53,7 @@ export function ProductCard({ product }: ProductCardProps) {
           </strong>
           {product.isFeatured ? (
             <span className="rounded-full bg-tomato/10 px-2.5 py-1 text-xs font-bold text-tomato">
-              Promoção
+              {t("public.promo")}
             </span>
           ) : null}
         </div>

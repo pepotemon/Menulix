@@ -1,4 +1,5 @@
 import type { OpeningHours, Weekday } from "@/types/menu";
+import { dictionary, defaultLanguage, type Language } from "@/lib/i18n";
 
 const weekdays: Weekday[] = [
   "sunday",
@@ -10,14 +11,14 @@ const weekdays: Weekday[] = [
   "saturday"
 ];
 
-const weekdayLabels: Record<Weekday, string> = {
-  monday: "Segunda",
-  tuesday: "Terça",
-  wednesday: "Quarta",
-  thursday: "Quinta",
-  friday: "Sexta",
-  saturday: "Sábado",
-  sunday: "Domingo"
+const weekdayLabelKeys: Record<Weekday, keyof typeof dictionary.pt> = {
+  monday: "menu.weekday.monday",
+  tuesday: "menu.weekday.tuesday",
+  wednesday: "menu.weekday.wednesday",
+  thursday: "menu.weekday.thursday",
+  friday: "menu.weekday.friday",
+  saturday: "menu.weekday.saturday",
+  sunday: "menu.weekday.sunday"
 };
 
 export function formatCurrencyBRL(value: number) {
@@ -31,26 +32,36 @@ export function normalizeWhatsappNumber(value: string) {
   return value.replace(/\D/g, "");
 }
 
-export function buildWhatsappUrl(phone: string, restaurantName: string) {
-  const message =
-    "Olá, vim pelo cardápio digital da Menulix e gostaria de fazer um pedido.";
+export function buildWhatsappUrl(
+  phone: string,
+  restaurantName: string,
+  language: Language = defaultLanguage
+) {
+  const message = dictionary[language]["whatsapp.message"];
   const encodedMessage = encodeURIComponent(`${message}\n\n${restaurantName}`);
 
   return `https://wa.me/${normalizeWhatsappNumber(phone)}?text=${encodedMessage}`;
 }
 
-export function getTodaysOpeningLabel(openingHours: OpeningHours, date = new Date()) {
+export function getTodaysOpeningLabel(
+  openingHours: OpeningHours,
+  date = new Date(),
+  language: Language = defaultLanguage
+) {
   const today = weekdays[date.getDay()];
   const periods = openingHours[today];
 
   if (!periods?.length) {
-    return "Fechado hoje";
+    return dictionary[language]["menu.closedToday"];
   }
 
   return periods.map((period) => `${period.opens} as ${period.closes}`).join(" / ");
 }
 
-export function formatWeeklyOpeningHours(openingHours: OpeningHours) {
+export function formatWeeklyOpeningHours(
+  openingHours: OpeningHours,
+  language: Language = defaultLanguage
+) {
   const orderedWeekdays: Weekday[] = [
     "monday",
     "tuesday",
@@ -65,10 +76,10 @@ export function formatWeeklyOpeningHours(openingHours: OpeningHours) {
     const periods = openingHours[day];
     const label = periods?.length
       ? periods.map((period) => `${period.opens} as ${period.closes}`).join(" / ")
-      : "Fechado";
+      : dictionary[language]["menu.closed"];
 
     return {
-      day: weekdayLabels[day],
+      day: dictionary[language][weekdayLabelKeys[day]],
       label
     };
   });

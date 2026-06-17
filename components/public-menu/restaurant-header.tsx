@@ -1,6 +1,9 @@
+"use client";
+
 import Image from "next/image";
 import { Instagram, MapPin } from "lucide-react";
 import type { Restaurant } from "@/types/menu";
+import { useI18n } from "@/components/language-provider";
 import {
   getTodaysOpeningLabel,
   isRestaurantOpen
@@ -13,8 +16,13 @@ type RestaurantHeaderProps = {
 };
 
 export function RestaurantHeader({ restaurant }: RestaurantHeaderProps) {
+  const { language, t } = useI18n();
   const open = isRestaurantOpen(restaurant.openingHours);
-  const openingLabel = getTodaysOpeningLabel(restaurant.openingHours);
+  const openingLabel = getTodaysOpeningLabel(
+    restaurant.openingHours,
+    new Date(),
+    language
+  );
 
   return (
     <header className="relative bg-ink text-white">
@@ -48,7 +56,7 @@ export function RestaurantHeader({ restaurant }: RestaurantHeaderProps) {
             </div>
             <div className="min-w-0 pb-1">
               <p className="mb-2 inline-flex items-center rounded-full bg-white/15 px-3 py-1 text-xs font-bold uppercase tracking-wide text-white/90 backdrop-blur">
-                Cardápio digital
+                {t("public.header.badge")}
               </p>
               <h1 className="max-w-2xl text-4xl font-black leading-none text-white sm:text-5xl">
                 {restaurant.name}

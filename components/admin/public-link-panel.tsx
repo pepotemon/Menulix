@@ -5,6 +5,7 @@ import { Copy, ExternalLink, QrCode } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useI18n } from "@/components/language-provider";
 import type { Restaurant } from "@/types/menu";
 
 interface PublicLinkPanelProps {
@@ -14,6 +15,7 @@ interface PublicLinkPanelProps {
 export function PublicLinkPanel({
   restaurant
 }: PublicLinkPanelProps): JSX.Element {
+  const { t } = useI18n();
   const [qrDataUrl, setQrDataUrl] = useState("");
   const [copied, setCopied] = useState(false);
   const publicPath = `/${restaurant.slug}`;
@@ -42,9 +44,11 @@ export function PublicLinkPanel({
     <section className="rounded-md border border-line bg-white p-5 shadow-soft">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div>
-          <h2 className="text-lg font-black text-ink">Link do cardápio</h2>
+          <h2 className="text-lg font-black text-ink">
+            {t("admin.publicLink.title")}
+          </h2>
           <p className="mt-1 text-sm leading-6 text-ink/68">
-            Compartilhe este link com seus clientes ou use o QR Code no balcão.
+            {t("admin.publicLink.description")}
           </p>
           <p className="mt-3 break-all rounded-md border border-line bg-cream px-3 py-2 text-sm font-bold text-ink">
             {publicPath}
@@ -58,7 +62,7 @@ export function PublicLinkPanel({
             className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-line bg-white px-4 py-2 text-sm font-black text-ink transition hover:border-leaf hover:text-leaf"
           >
             <Copy size={18} />
-            {copied ? "Copiado" : "Copiar link"}
+            {copied ? t("admin.publicLink.copied") : t("admin.publicLink.copy")}
           </button>
           <Link
             href={publicPath}
@@ -66,7 +70,7 @@ export function PublicLinkPanel({
             className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-leaf px-4 py-2 text-sm font-black text-white transition hover:bg-ink"
           >
             <ExternalLink size={18} />
-            Ver cardápio
+            {t("admin.publicLink.open")}
           </Link>
         </div>
       </div>
@@ -75,7 +79,7 @@ export function PublicLinkPanel({
         <div className="mt-5 flex flex-col gap-4 border-t border-line pt-5 sm:flex-row sm:items-center">
           <Image
             src={qrDataUrl}
-            alt="QR Code do cardápio"
+            alt={t("admin.publicLink.qrAlt")}
             width={128}
             height={128}
             unoptimized
@@ -87,7 +91,7 @@ export function PublicLinkPanel({
             className="inline-flex min-h-11 w-fit items-center justify-center gap-2 rounded-md border border-line bg-white px-4 py-2 text-sm font-black text-ink transition hover:border-leaf hover:text-leaf"
           >
             <QrCode size={18} />
-            Baixar QR Code
+            {t("admin.publicLink.downloadQr")}
           </a>
         </div>
       ) : null}

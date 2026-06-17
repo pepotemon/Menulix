@@ -1,4 +1,7 @@
+"use client";
+
 import { CalendarDays } from "lucide-react";
+import { useI18n } from "@/components/language-provider";
 import type { OpeningHours as OpeningHoursType } from "@/types/menu";
 import { formatWeeklyOpeningHours } from "@/lib/menu-utils";
 
@@ -7,13 +10,16 @@ type OpeningHoursProps = {
 };
 
 export function OpeningHours({ openingHours }: OpeningHoursProps) {
-  const weeklyHours = formatWeeklyOpeningHours(openingHours);
+  const { language, t } = useI18n();
+  const weeklyHours = formatWeeklyOpeningHours(openingHours, language);
 
   return (
     <section className="rounded-lg border border-line bg-white p-4 shadow-sm">
       <div className="mb-3 flex items-center gap-2">
         <CalendarDays aria-hidden="true" className="h-5 w-5 text-leaf" />
-        <h2 className="text-base font-black text-ink">Horário de atendimento</h2>
+        <h2 className="text-base font-black text-ink">
+          {t("public.hours.title")}
+        </h2>
       </div>
       <dl className="grid gap-2 text-sm">
         {weeklyHours.map((item) => (

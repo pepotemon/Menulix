@@ -5,16 +5,18 @@ import Link from "next/link";
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { PublicLinkPanel } from "@/components/admin/public-link-panel";
 import { useAdminData } from "@/components/admin/admin-data-provider";
+import { useI18n } from "@/components/language-provider";
 
 export default function AdminDashboardPage(): JSX.Element {
   const { restaurant, categories, products, isLoading, errorMessage } =
     useAdminData();
+  const { t } = useI18n();
 
   if (isLoading || !restaurant) {
     return (
       <AdminPageHeader
-        title="Meu cardápio"
-        description={errorMessage || "Carregando as informações do seu cardápio."}
+        title={t("admin.dashboard.title")}
+        description={errorMessage || t("admin.data.loadError")}
       />
     );
   }
@@ -22,33 +24,33 @@ export default function AdminDashboardPage(): JSX.Element {
   return (
     <>
       <AdminPageHeader
-        title="Meu cardápio"
-        description="Escolha o que você quer mudar. As ações principais ficam sempre à mão para facilitar o dia a dia."
+        title={t("admin.dashboard.title")}
+        description={t("admin.dashboard.description")}
       />
 
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {[
           {
             href: "/admin/produtos",
-            label: "Adicionar produto",
+            label: t("admin.dashboard.addProduct"),
             icon: Plus,
             primary: true
           },
           {
             href: "/admin/produtos",
-            label: "Editar produtos",
+            label: t("admin.dashboard.editProducts"),
             icon: ClipboardList,
             primary: false
           },
           {
             href: "/admin/categorias",
-            label: "Editar categorias",
+            label: t("admin.dashboard.editCategories"),
             icon: FolderTree,
             primary: false
           },
           {
             href: "/admin/restaurante",
-            label: "Informações",
+            label: t("admin.dashboard.info"),
             icon: Store,
             primary: false
           }
@@ -70,18 +72,26 @@ export default function AdminDashboardPage(): JSX.Element {
 
       <div className="mt-6 grid gap-4 md:grid-cols-3">
         <section className="rounded-md border border-line bg-white p-5 shadow-soft">
-          <p className="text-sm font-bold text-ink/50">Produtos</p>
+          <p className="text-sm font-bold text-ink/50">
+            {t("admin.dashboard.products")}
+          </p>
           <p className="mt-2 text-3xl font-black text-ink">{products.length}</p>
         </section>
         <section className="rounded-md border border-line bg-white p-5 shadow-soft">
-          <p className="text-sm font-bold text-ink/50">Categorias</p>
+          <p className="text-sm font-bold text-ink/50">
+            {t("admin.dashboard.categories")}
+          </p>
           <p className="mt-2 text-3xl font-black text-ink">{categories.length}</p>
         </section>
         <section className="rounded-md border border-line bg-white p-5 shadow-soft">
-          <p className="text-sm font-bold text-ink/50">Publicado</p>
+          <p className="text-sm font-bold text-ink/50">
+            {t("admin.dashboard.published")}
+          </p>
           <p className="mt-2 flex items-center gap-2 text-lg font-black text-ink">
             <Eye size={20} />
-            {restaurant.isActive ? "Sim" : "Não"}
+            {restaurant.isActive
+              ? t("admin.dashboard.yes")
+              : t("admin.dashboard.no")}
           </p>
         </section>
       </div>

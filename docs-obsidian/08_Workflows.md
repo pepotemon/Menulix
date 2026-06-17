@@ -149,3 +149,4 @@ export default function Exemplo({ titulo, opcional }: ExemploProps) {
 5. **Sem dados sensíveis no código** — chaves de API sempre em `.env.local`
 6. **Atualizar docs-obsidian** após mudanças significativas
 7. **Commit com mensagem clara** — feat/fix/refactor/docs: descrição em português
+8. **Atualizar dicionário PT/ES** — todo texto fixo novo de UI deve entrar em `lib/i18n.ts`

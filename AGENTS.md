@@ -238,7 +238,10 @@ Sombras:   shadow-soft
 Nunca usar valores HEX ou RGB inline — sempre tokens.
 
 ### Idiomas
-- UI (texto visível): **português do Brasil**
+- UI (texto visível): **português do Brasil e espanhol**
+- Todo texto fixo novo de UI deve entrar em `lib/i18n.ts` nas chaves `pt` e `es`
+- Não escrever texto fixo diretamente em componentes quando ele puder vir do dicionário
+- Ao criar/alterar telas, revisar o dicionário PT/ES na mesma mudança
 - Código (vars, funções, arquivos, tipos): **inglês**
 
 ### Segurança

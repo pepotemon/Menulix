@@ -11,13 +11,14 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useAuth } from "@/components/admin/auth-provider";
+import { useI18n } from "@/components/language-provider";
 
 const navItems = [
-  { href: "/admin", label: "Meu cardápio", icon: LayoutDashboard },
-  { href: "/admin/produtos", label: "Produtos", icon: ClipboardList },
-  { href: "/admin/categorias", label: "Categorias", icon: FolderTree },
-  { href: "/admin/restaurante", label: "Informações", icon: Store }
-];
+  { href: "/admin", labelKey: "admin.nav.home", icon: LayoutDashboard },
+  { href: "/admin/produtos", labelKey: "admin.nav.products", icon: ClipboardList },
+  { href: "/admin/categorias", labelKey: "admin.nav.categories", icon: FolderTree },
+  { href: "/admin/restaurante", labelKey: "admin.nav.info", icon: Store }
+] as const;
 
 interface AdminShellProps {
   children: React.ReactNode;
@@ -27,6 +28,7 @@ export function AdminShell({ children }: AdminShellProps): JSX.Element {
   const pathname = usePathname();
   const router = useRouter();
   const { user, isLoading, signOutUser } = useAuth();
+  const { t } = useI18n();
   const isLoginPage = pathname === "/admin/login";
 
   useEffect(() => {
@@ -47,7 +49,9 @@ export function AdminShell({ children }: AdminShellProps): JSX.Element {
   if (isLoading || !user) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-cream px-6 text-ink">
-        <p className="text-sm font-semibold text-ink/68">Carregando painel...</p>
+        <p className="text-sm font-semibold text-ink/68">
+          {t("admin.loading")}
+        </p>
       </main>
     );
   }
@@ -60,15 +64,15 @@ export function AdminShell({ children }: AdminShellProps): JSX.Element {
             <Link href="/admin" className="block">
               <span className="block text-xl font-black">Menulix</span>
               <span className="block text-xs font-semibold text-ink/50">
-                Meu cardápio
+                {t("admin.brand.subtitle")}
               </span>
             </Link>
             <button
               type="button"
               onClick={handleSignOut}
               className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-line bg-white text-ink transition hover:border-tomato hover:text-tomato md:hidden"
-              aria-label="Sair"
-              title="Sair"
+              aria-label={t("admin.nav.logout")}
+              title={t("admin.nav.logout")}
             >
               <LogOut size={18} />
             </button>
@@ -90,7 +94,7 @@ export function AdminShell({ children }: AdminShellProps): JSX.Element {
                   }`}
                 >
                   <Icon size={18} />
-                  {item.label}
+                  {t(item.labelKey)}
                 </Link>
               );
             })}
@@ -102,7 +106,7 @@ export function AdminShell({ children }: AdminShellProps): JSX.Element {
             className="mt-8 hidden min-h-11 w-full items-center justify-center gap-2 rounded-md border border-line bg-white px-3 py-2 text-sm font-semibold text-ink/68 transition hover:border-tomato hover:text-tomato md:inline-flex"
           >
             <LogOut size={18} />
-            Sair
+            {t("admin.nav.logout")}
           </button>
         </aside>
 

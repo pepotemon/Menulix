@@ -187,6 +187,20 @@ Cada decisão usa o formato:
 
 ---
 
+## [DEC-014] Dicionário local obrigatório para UI PT/ES
+
+**Data**: 2026-06-17
+**Contexto**: Antes da Fase 3, o produto precisa suportar português e espanhol tanto no painel admin quanto no cardápio público.
+**Decisão**: Criar um dicionário local em `lib/i18n.ts`, usar `LanguageProvider` no layout raiz e expor um seletor PT/ES fixo. Todo texto fixo novo de UI deve ser cadastrado no dicionário em português e espanhol.
+**Alternativas descartadas**: Manter textos hardcoded; adotar biblioteca externa de i18n agora; criar rotas separadas por idioma.
+**Consequências**:
+- O idioma pode ser trocado rapidamente sem mudar URL
+- A base fica preparada para usuários em PT/ES antes da personalização visual
+- Novas features precisam atualizar o dicionário na mesma mudança
+- Dados cadastrados pelo restaurante não são traduzidos automaticamente
+
+---
+
 ## Decisões Pendentes
 
 - [ ] Armazenamento de preços: float vs centavos inteiros no Firestore

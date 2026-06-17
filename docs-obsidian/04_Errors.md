@@ -22,6 +22,17 @@
 
 ## Erros Registrados
 
+### [ERR-002] Inputs numéricos do admin não podiam ficar vazios
+
+**Data**: 2026-06-17
+**Arquivo**: `app/admin/produtos/page.tsx`, `app/admin/categorias/page.tsx`
+**Sintoma**: Ao criar produto ou categoria, os campos numéricos de preço e ordem começavam com `0` ou outro número e era incômodo apagar o valor para digitar.
+**Causa raiz**: Os inputs eram controlados diretamente por valores `number`; quando o usuário limpava o campo, o React convertia `""` para `0`.
+**Solução**: Usar estado textual temporário para os inputs numéricos e converter para número apenas no submit.
+**Prevenção**: Em formulários com inputs numéricos editáveis, manter o valor digitado como string até a validação/salvamento.
+
+---
+
 ### [ERR-001] Imagens externas bloqueadas pelo Next.js
 
 **Data**: 2026-06-16 (Fase 1)

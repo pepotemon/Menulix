@@ -31,6 +31,58 @@ O que isso afeta.
 
 ---
 
+### [2026-06-17] Base bilíngue PT/ES para admin e cardápio público
+
+**Fase**: FASE 2 (preparação antes da FASE 3)
+**Tipo**: feat
+**Arquivos criados/modificados**:
+- `lib/i18n.ts` — dicionário central português/espanhol
+- `components/language-provider.tsx` — estado global de idioma
+- `components/language-switcher.tsx` — seletor PT/ES fixo
+- `app/layout.tsx` — provider global e botão de idioma
+- `components/public-menu/*` — textos públicos conectados ao dicionário
+- `app/admin/*`, `components/admin/*` — textos principais do painel conectados ao dicionário
+- `lib/menu-utils.ts` — labels de horário e WhatsApp recebem idioma
+- `AGENTS.md`, `02_Architecture.md`, `03_Decisions.md`, `08_Workflows.md`
+
+**O que mudou**:
+A UI passa a ter base bilíngue com troca rápida entre português e espanhol.
+O dicionário virou parte obrigatória do fluxo de desenvolvimento.
+
+**Por que**:
+Antes de iniciar a Fase 3, é melhor evitar textos hardcoded e preparar o produto
+para restaurantes/clientes que preferem espanhol.
+
+**Impacto**:
+- Botão PT/ES disponível em todas as telas
+- Textos fixos principais do admin e cardápio público ficam centralizados
+- Toda nova UI deve atualizar `lib/i18n.ts` em português e espanhol
+
+---
+
+### [2026-06-17] Ajuste UX — inputs de preço e ordem vazios ao criar
+
+**Fase**: FASE 2
+**Tipo**: fix
+**Arquivos criados/modificados**:
+- `app/admin/produtos/page.tsx`
+- `app/admin/categorias/page.tsx`
+- `docs-obsidian/04_Errors.md`
+- `docs-obsidian/06_Changelog.md`
+
+**O que mudou**:
+Campos de preço e ordem agora usam texto temporário no formulário, permitindo que
+o usuário apague o conteúdo normalmente. Em novos produtos/categorias, os campos
+começam vazios com placeholder, e o número é calculado ao salvar.
+
+**Por que**:
+Inputs controlados como `number` convertiam campo vazio para `0`, atrapalhando a digitação.
+
+**Impacto**:
+Melhora a experiência de cadastro para usuários não técnicos no painel admin.
+
+---
+
 ### [2026-06-17] Fase 2 concluída — painel admin simples
 
 **Fase**: FASE 2
