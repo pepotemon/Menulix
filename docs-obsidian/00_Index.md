@@ -25,8 +25,8 @@
 ## Estado Atual do Projeto
 
 ```
-Fase atual:    FASE 2 — Painel Administrativo ✅
-Próxima fase:  FASE 3 — Personalização visual
+Fase atual:    FASE 3 — Personalização visual 🚧
+Próxima fase:  FASE 4 — Planos e monetização
 Firebase:      Firestore + Auth + Storage implementados localmente
 Deploy:        Não configurado
 ```
@@ -37,7 +37,7 @@ Deploy:        Não configurado
 
 - [x] **FASE 1** — MVP público do cardápio digital
 - [x] **FASE 2** — Painel administrativo básico
-- [ ] **FASE 3** — Personalização visual
+- [ ] **FASE 3** — Personalização visual 🚧
 - [ ] **FASE 4** — Planos e monetização
 - [ ] **FASE 5** — Pedidos por WhatsApp
 - [ ] **FASE 6** — Estatísticas

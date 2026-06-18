@@ -25,16 +25,18 @@ export function RestaurantHeader({ restaurant }: RestaurantHeaderProps) {
   );
 
   return (
-    <header className="relative bg-ink text-white">
+    <header className="relative bg-[var(--restaurant-primary)] text-white">
       <div className="absolute inset-0">
-        <Image
-          priority
-          alt={`Banner de ${restaurant.name}`}
-          className="object-cover"
-          fill
-          sizes="100vw"
-          src={restaurant.bannerUrl}
-        />
+        {restaurant.bannerUrl ? (
+          <Image
+            priority
+            alt={`Banner de ${restaurant.name}`}
+            className="object-cover"
+            fill
+            sizes="100vw"
+            src={restaurant.bannerUrl}
+          />
+        ) : null}
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/60 to-ink/10" />
       </div>
 
@@ -46,13 +48,15 @@ export function RestaurantHeader({ restaurant }: RestaurantHeaderProps) {
         <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
           <div className="flex items-end gap-4">
             <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-lg border-4 border-white bg-white shadow-soft">
-              <Image
-                alt={`Logo de ${restaurant.name}`}
-                className="object-cover"
-                fill
-                sizes="96px"
-                src={restaurant.logoUrl}
-              />
+              {restaurant.logoUrl ? (
+                <Image
+                  alt={`Logo de ${restaurant.name}`}
+                  className="object-cover"
+                  fill
+                  sizes="96px"
+                  src={restaurant.logoUrl}
+                />
+              ) : null}
             </div>
             <div className="min-w-0 pb-1">
               <p className="mb-2 inline-flex items-center rounded-full bg-white/15 px-3 py-1 text-xs font-bold uppercase tracking-wide text-white/90 backdrop-blur">

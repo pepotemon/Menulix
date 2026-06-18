@@ -16,7 +16,10 @@ export function OpeningHours({ openingHours }: OpeningHoursProps) {
   return (
     <section className="rounded-lg border border-line bg-white p-4 shadow-sm">
       <div className="mb-3 flex items-center gap-2">
-        <CalendarDays aria-hidden="true" className="h-5 w-5 text-leaf" />
+        <CalendarDays
+          aria-hidden="true"
+          className="h-5 w-5 text-[var(--restaurant-primary)]"
+        />
         <h2 className="text-base font-black text-ink">
           {t("public.hours.title")}
         </h2>

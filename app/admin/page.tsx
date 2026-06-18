@@ -1,6 +1,6 @@
 "use client";
 
-import { ClipboardList, Eye, FolderTree, Plus, Store } from "lucide-react";
+import { ClipboardList, Eye, FolderTree, Palette, Plus, Store } from "lucide-react";
 import Link from "next/link";
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { PublicLinkPanel } from "@/components/admin/public-link-panel";
@@ -46,6 +46,12 @@ export default function AdminDashboardPage(): JSX.Element {
             href: "/admin/categorias",
             label: t("admin.dashboard.editCategories"),
             icon: FolderTree,
+            primary: false
+          },
+          {
+            href: "/admin/aparencia",
+            label: t("admin.dashboard.editAppearance"),
+            icon: Palette,
             primary: false
           },
           {

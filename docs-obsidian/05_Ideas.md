@@ -32,11 +32,11 @@
 
 ## Fase 3 — Personalização Visual
 
-✅ **Cores customizadas** por restaurante (primária, secundária, fundo)
-✅ **Templates por tipo de negócio**:
+🚧 **Cores customizadas** por restaurante (primária, secundária, fundo)
+🚧 **Templates por tipo de negócio**:
 - Pizzaria, Hamburgueria, Açaí, Marmitaria, Cafeteria, Sushi, Doceria
-✅ **Modo claro/escuro** opcional
-✅ **Upload de banner e logo** diretamente no painel
+💡 **Modo claro/escuro** opcional
+🚧 **Upload de banner e logo** diretamente no painel
 
 ---
 

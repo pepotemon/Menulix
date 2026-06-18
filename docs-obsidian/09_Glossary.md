@@ -35,6 +35,8 @@
 | **PublicMenu** | Interface TypeScript que agrupa `restaurant + categories + products` |
 | **OpeningHours** | Tipo que mapeia dias da semana a períodos de funcionamento |
 | **RestaurantTheme** | Objeto com cores personalizadas por restaurante |
+| **RestaurantTemplate** | Tipo de template visual usado como preset de cores por segmento |
+| **Branding** | Imagens e cores que identificam visualmente o restaurante, como logo e banner |
 | **`generateStaticParams`** | Função do Next.js que pré-gera rotas dinâmicas no build |
 | **`isActive`** | Flag booleana que controla se um restaurante/categoria/produto está visível |
 | **`isFeatured`** | Flag que marca um produto como destaque ou promoção |

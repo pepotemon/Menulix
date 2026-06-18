@@ -14,6 +14,7 @@ import { db, storage } from "@/lib/firebase";
 import type {
   Category,
   CategoryFormInput,
+  AppearanceFormInput,
   Product,
   ProductFormInput,
   Restaurant,
@@ -90,6 +91,7 @@ export async function getOrCreateRestaurant(ownerId: string): Promise<Restaurant
     city: "",
     state: "",
     isActive: false,
+    template: "pizzaria",
     theme: defaultTheme,
     openingHours: {},
     createdAt: now,
@@ -99,6 +101,19 @@ export async function getOrCreateRestaurant(ownerId: string): Promise<Restaurant
   await setDoc(restaurantRef, restaurant);
 
   return { id: restaurantRef.id, ...restaurant };
+}
+
+export async function saveAppearance(
+  restaurantId: string,
+  input: AppearanceFormInput
+): Promise<void> {
+  await updateDoc(doc(db, "restaurants", restaurantId), {
+    template: input.template,
+    logoUrl: input.logoUrl,
+    bannerUrl: input.bannerUrl,
+    theme: input.theme,
+    updatedAt: new Date().toISOString()
+  });
 }
 
 export async function saveRestaurant(
@@ -166,6 +181,18 @@ export async function uploadProductImage(
 ): Promise<string> {
   const extension = file.name.split(".").pop() ?? "jpg";
   const storagePath = `restaurants/${restaurantId}/products/${crypto.randomUUID()}.${extension}`;
+  const imageRef = ref(storage, storagePath);
+  await uploadBytes(imageRef, file);
+  return getDownloadURL(imageRef);
+}
+
+export async function uploadRestaurantAsset(
+  restaurantId: string,
+  kind: "logo" | "banner",
+  file: File
+): Promise<string> {
+  const extension = file.name.split(".").pop() ?? "jpg";
+  const storagePath = `restaurants/${restaurantId}/branding/${kind}-${crypto.randomUUID()}.${extension}`;
   const imageRef = ref(storage, storagePath);
   await uploadBytes(imageRef, file);
   return getDownloadURL(imageRef);

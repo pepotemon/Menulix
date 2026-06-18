@@ -36,6 +36,7 @@ Menulix/
 │   │   ├── layout.tsx           # AuthProvider + AdminShell
 │   │   ├── login/page.tsx       # Login Firebase Auth
 │   │   ├── page.tsx             # Meu cardápio: ações, status, link e QR
+│   │   ├── aparencia/page.tsx   # Fase 3: cores, template, logo e banner
 │   │   ├── restaurante/page.tsx # CRUD de informações do restaurante
 │   │   ├── categorias/page.tsx  # CRUD de categorias
 │   │   └── produtos/page.tsx    # CRUD de produtos + upload de imagem
@@ -116,6 +117,7 @@ Todos os tipos estão centralizados em `types/menu.ts`.
   city: string
   state: string
   isActive: boolean
+  template?: RestaurantTemplate
   theme: RestaurantTheme
   openingHours: OpeningHours
   createdAt: Date
@@ -167,6 +169,11 @@ type OpeningHours = Partial<Record<Weekday, OpeningPeriod[]>>
   backgroundColor: string
   textColor: string
 }
+```
+
+### `RestaurantTemplate`
+```typescript
+"pizzaria" | "hamburgueria" | "acai" | "marmitaria" | "cafeteria" | "sushi" | "doceria"
 ```
 
 ---
@@ -264,6 +271,8 @@ Ordenação feita client-side para evitar criação de índices no Firestore.
 | `createCategory/updateCategory/deleteCategory` | CRUD de categorias |
 | `createProduct/updateProduct/deleteProduct` | CRUD de produtos |
 | `uploadProductImage(restaurantId, file)` | Upload para Firebase Storage |
+| `saveAppearance(id, input)` | Atualiza template, tema, logo e banner |
+| `uploadRestaurantAsset(id, kind, file)` | Upload de logo/banner para Storage |
 | `slugifyRestaurantName(value)` | Normaliza slug editável |
 
 ## Coleções no Firestore
@@ -285,6 +294,7 @@ Ordenação feita client-side para evitar criação de índices no Firestore.
 ## Regras de Storage (`storage.rules`)
 
 - Leitura pública para imagens em `restaurants/{restaurantId}/products/{fileName}`
+- Leitura pública para branding em `restaurants/{restaurantId}/branding/{fileName}`
 - Escrita apenas pelo dono autenticado do restaurante
 - Limite de 5 MB por arquivo
 - Apenas `contentType` de imagem
@@ -317,6 +327,19 @@ URL gerada: `https://wa.me/[number]?text=[encoded_message]`
 - `images.unsplash.com` (usado nos dados mockados)
 
 Firebase Storage já está permitido em `next.config.mjs`.
+
+## Personalização Visual (Fase 3)
+
+- Tela admin: `/admin/aparencia`
+- Presets por tipo de restaurante em `app/admin/aparencia/page.tsx`
+- Cores salvas em `restaurant.theme`
+- Template salvo em `restaurant.template`
+- Logo e banner salvos em `restaurant.logoUrl` e `restaurant.bannerUrl`
+- Cardápio público aplica cores via CSS variables:
+  - `--restaurant-primary`
+  - `--restaurant-secondary`
+  - `--restaurant-bg`
+  - `--restaurant-text`
 
 ---
 

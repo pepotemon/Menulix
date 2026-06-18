@@ -9,7 +9,7 @@
 
 **Menulix** — plataforma SaaS multi-tenant para cardápios digitais de restaurantes no Brasil.
 Stack: Next.js 14 App Router · TypeScript strict · Tailwind CSS · Firebase
-Fase atual: **FASE 2 concluída** | Próxima: **FASE 3 — Personalização visual**
+Fase atual: **FASE 3 em desenvolvimento** | Próxima: **FASE 4 — Planos e monetização**
 
 ---
 
@@ -273,7 +273,7 @@ Nunca usar valores HEX ou RGB inline — sempre tokens.
 |------|--------|-----------|
 | FASE 1 | ✅ Completa | MVP público — cardápios por slug |
 | FASE 2 | ✅ Completa | Painel admin — Firebase Auth + CRUD |
-| FASE 3 | ⏳ Pendente | Personalização visual por restaurante |
+| FASE 3 | 🚧 Em desenvolvimento | Personalização visual por restaurante |
 | FASE 4 | ⏳ Pendente | Planos e monetização |
 | FASE 5 | ⏳ Pendente | Carrinho + pedidos por WhatsApp |
 | FASE 6 | ⏳ Pendente | Estatísticas e analytics |

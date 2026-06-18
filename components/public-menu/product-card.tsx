@@ -24,7 +24,7 @@ export function ProductCard({ product }: ProductCardProps) {
           src={product.imageUrl}
         />
         {product.isFeatured ? (
-          <div className="absolute left-2 top-2 rounded-full bg-tomato px-2 py-1 text-white">
+          <div className="absolute left-2 top-2 rounded-full bg-[var(--restaurant-secondary)] px-2 py-1 text-white">
             <BadgePercent aria-hidden="true" className="h-3.5 w-3.5" />
             <span className="sr-only">{t("public.featuredSr")}</span>
           </div>
@@ -52,7 +52,7 @@ export function ProductCard({ product }: ProductCardProps) {
             {formatCurrencyBRL(product.price)}
           </strong>
           {product.isFeatured ? (
-            <span className="rounded-full bg-tomato/10 px-2.5 py-1 text-xs font-bold text-tomato">
+            <span className="rounded-full border border-[var(--restaurant-secondary)] px-2.5 py-1 text-xs font-bold text-[var(--restaurant-secondary)]">
               {t("public.promo")}
             </span>
           ) : null}

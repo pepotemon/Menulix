@@ -19,7 +19,10 @@ export function CategorySection({ category, products }: CategorySectionProps) {
   return (
     <section aria-labelledby={category.id} className="scroll-mt-24">
       <div className="mb-3 flex items-end justify-between gap-4">
-        <h2 id={category.id} className="text-xl font-black text-ink">
+        <h2
+          id={category.id}
+          className="text-xl font-black text-[var(--restaurant-text)]"
+        >
           {category.name}
         </h2>
         <span className="text-sm font-semibold text-ink/50">

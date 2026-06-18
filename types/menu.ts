@@ -21,6 +21,15 @@ export type RestaurantTheme = {
   textColor: string;
 };
 
+export type RestaurantTemplate =
+  | "pizzaria"
+  | "hamburgueria"
+  | "acai"
+  | "marmitaria"
+  | "cafeteria"
+  | "sushi"
+  | "doceria";
+
 export type Restaurant = {
   id: string;
   ownerId?: string;
@@ -35,6 +44,7 @@ export type Restaurant = {
   city: string;
   state: string;
   isActive: boolean;
+  template?: RestaurantTemplate;
   theme: RestaurantTheme;
   openingHours: OpeningHours;
   createdAt: string;
@@ -100,4 +110,11 @@ export type ProductFormInput = {
   isAvailable: boolean;
   isFeatured: boolean;
   order: number;
+};
+
+export type AppearanceFormInput = {
+  template: RestaurantTemplate;
+  logoUrl: string;
+  bannerUrl: string;
+  theme: RestaurantTheme;
 };

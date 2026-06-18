@@ -31,6 +31,35 @@ O que isso afeta.
 
 ---
 
+### [2026-06-18] Fase 3 iniciada — aparência visual do restaurante
+
+**Fase**: FASE 3
+**Tipo**: feat
+**Arquivos criados/modificados**:
+- `app/admin/aparencia/page.tsx` — tela de template, cores, logo e banner
+- `components/admin/admin-shell.tsx` — navegação inclui Aparência
+- `types/menu.ts` — adiciona `RestaurantTemplate` e `AppearanceFormInput`
+- `lib/admin-firestore.ts` — salva aparência e faz upload de logo/banner
+- `storage.rules` — libera path de branding por restaurante
+- `components/public-menu/*` — aplica cores do restaurante no cardápio público
+- `lib/i18n.ts` — textos PT/ES da Fase 3
+- `AGENTS.md`, `00_Index.md`, `02_Architecture.md`, `03_Decisions.md`, `09_Glossary.md`
+
+**O que mudou**:
+Fase 3 foi iniciada com personalização visual simples: presets por tipo de restaurante,
+cores customizadas, upload/link de logo e banner, prévia no admin e aplicação das cores
+no cardápio público.
+
+**Por que**:
+Restaurantes precisam que o cardápio pareça deles, sem precisar entender design ou CSS.
+
+**Impacto**:
+- Nova rota `/admin/aparencia`
+- Cardápio público usa CSS variables baseadas em `restaurant.theme`
+- Será necessário redeploy de `storage.rules` para upload de logo/banner em produção
+
+---
+
 ### [2026-06-17] Base bilíngue PT/ES para admin e cardápio público
 
 **Fase**: FASE 2 (preparação antes da FASE 3)

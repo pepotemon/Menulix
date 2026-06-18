@@ -201,6 +201,20 @@ Cada decisão usa o formato:
 
 ---
 
+## [DEC-015] Tema visual por restaurante com CSS variables
+
+**Data**: 2026-06-18
+**Contexto**: A Fase 3 precisa permitir cores customizadas por restaurante sem gerar classes Tailwind dinâmicas inválidas.
+**Decisão**: Salvar cores em `restaurant.theme` e aplicá-las no cardápio público via CSS variables (`--restaurant-primary`, `--restaurant-secondary`, `--restaurant-bg`, `--restaurant-text`).
+**Alternativas descartadas**: Gerar classes Tailwind em runtime; criar CSS separado por restaurante; limitar personalização apenas a presets fixos.
+**Consequências**:
+- O cardápio público reflete cores salvas no Firestore sem rebuild manual de CSS
+- Presets continuam simples para usuários não técnicos
+- Componentes públicos usam tokens fixos para estrutura e CSS variables para identidade do restaurante
+- Valores de cor continuam controlados pelo admin, não hardcoded nos componentes
+
+---
+
 ## Decisões Pendentes
 
 - [ ] Armazenamento de preços: float vs centavos inteiros no Firestore

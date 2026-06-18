@@ -5,6 +5,7 @@ import {
   FolderTree,
   LayoutDashboard,
   LogOut,
+  Palette,
   Store
 } from "lucide-react";
 import Link from "next/link";
@@ -17,6 +18,7 @@ const navItems = [
   { href: "/admin", labelKey: "admin.nav.home", icon: LayoutDashboard },
   { href: "/admin/produtos", labelKey: "admin.nav.products", icon: ClipboardList },
   { href: "/admin/categorias", labelKey: "admin.nav.categories", icon: FolderTree },
+  { href: "/admin/aparencia", labelKey: "admin.nav.appearance", icon: Palette },
   { href: "/admin/restaurante", labelKey: "admin.nav.info", icon: Store }
 ] as const;
 
