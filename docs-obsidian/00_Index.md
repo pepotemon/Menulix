@@ -2,7 +2,7 @@
 
 > Este é o mapa central de todo o conhecimento do projeto Menulix.
 > Criado em: 2026-06-16
-> Última atualização: 2026-06-16
+> Última atualização: 2026-06-18
 
 ---
 
@@ -25,10 +25,11 @@
 ## Estado Atual do Projeto
 
 ```
-Fase atual:    FASE 3 — Personalização visual 🚧
-Próxima fase:  FASE 4 — Planos e monetização
-Firebase:      Firestore + Auth + Storage implementados localmente
-Deploy:        Não configurado
+Fase atual:    FASE 3 — Personalização visual 🚧 (em pausa para polimento)
+               FASE 5 — Carrinho + WhatsApp ✅ implementada
+Próxima fase:  FASE 4 — Planos e monetização (adiada) | FASE 6 — Estatísticas
+Firebase:      Firestore + Auth + Storage conectados + cache offline IndexedDB ativo
+Deploy:        Vercel (variáveis de ambiente pendentes de configuração)
 ```
 
 ---
@@ -37,9 +38,9 @@ Deploy:        Não configurado
 
 - [x] **FASE 1** — MVP público do cardápio digital
 - [x] **FASE 2** — Painel administrativo básico
-- [ ] **FASE 3** — Personalização visual 🚧
-- [ ] **FASE 4** — Planos e monetização
-- [ ] **FASE 5** — Pedidos por WhatsApp
+- [ ] **FASE 3** — Personalização visual 🚧 (em pausa para polimento)
+- [ ] **FASE 4** — Planos e monetização ⏳ (adiada)
+- [x] **FASE 5** — Carrinho + pedidos por WhatsApp ✅
 - [ ] **FASE 6** — Estatísticas
 - [ ] **FASE 7** — Admin interno Menulix
 

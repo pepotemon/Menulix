@@ -1,6 +1,6 @@
 # 05 — Ideias e Backlog
 
-> Última atualização: 2026-06-16
+> Última atualização: 2026-06-18
 > Relacionado: [[01_Project]] | [[06_Changelog]] | [[03_Decisions]]
 
 ---
@@ -40,10 +40,10 @@
 
 ---
 
-## Fase 5 — Carrinho e Pedidos WhatsApp
+## Fase 5 — Carrinho e Pedidos WhatsApp ✔️ Implementada
 
-✅ **Carrinho simples**: adicionar/remover produtos, quantidade
-✅ **Mensagem formatada no WhatsApp**:
+✔️ **Carrinho simples**: adicionar/remover produtos, quantidade
+✔️ **Mensagem formatada no WhatsApp**:
 ```
 Olá! Gostaria de fazer o seguinte pedido:
 

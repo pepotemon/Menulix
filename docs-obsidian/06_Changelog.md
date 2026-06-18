@@ -31,6 +31,110 @@ O que isso afeta.
 
 ---
 
+### [2026-06-18] Fix UX — seletor de idioma movido para o admin
+
+**Fase**: FASE 3 / transversal
+**Tipo**: fix
+**Arquivos modificados**:
+- `components/language-switcher.tsx` — removido posicionamento fixed
+- `app/layout.tsx` — removido LanguageSwitcher do layout global
+- `components/admin/admin-shell.tsx` — LanguageSwitcher adicionado ao sidebar
+- `components/language-provider.tsx` — detecção de idioma pelo navigator.language
+
+**O que mudou**:
+O seletor PT/ES foi removido do cardápio público (onde não havia contexto de uso)
+e movido para dentro do painel admin. No admin desktop fica abaixo do botão "Sair";
+no mobile aparece no final do scroll horizontal da nav. No cardápio público, o idioma
+é detectado automaticamente pelo browser via `navigator.language`.
+
+**Por que**:
+O toggle fixo aparecia em cima da barra sticky de categorias no mobile, causando
+conflito visual. O cliente do restaurante não precisa de um toggle manual de idioma.
+
+**Impacto**:
+- Cardápio público limpo, sem elementos sobrepostos
+- Admin mantém controle explícito de idioma
+
+---
+
+### [2026-06-18] Fix UX — scroll de categorias e posição do seletor
+
+**Fase**: FASE 5 / FASE 3
+**Tipo**: fix
+**Arquivos modificados**:
+- `components/public-menu/category-section.tsx`
+
+**O que mudou**:
+O atributo `id` foi movido do `<h2>` para o `<section>`, corrigindo o `scroll-mt-20`
+que estava no elemento errado. Os links da nav de categorias agora scrollam para a
+section correta sem esconder o título atrás da barra sticky.
+
+**Por que**:
+`scroll-margin-top` só funciona no elemento que é alvo do anchor (`href="#id"`).
+O `id` estava no `<h2>` filho mas o `scroll-mt` estava no `<section>` pai.
+
+**Impacto**:
+Navegação por categorias funciona corretamente em todos os dispositivos.
+
+---
+
+### [2026-06-18] Fase 5 completa — carrinho de pedidos com WhatsApp
+
+**Fase**: FASE 5
+**Tipo**: feat
+**Arquivos criados**:
+- `components/public-menu/cart-provider.tsx` — contexto do carrinho + localStorage
+- `components/public-menu/cart-button.tsx` — botão flutuante com total e contagem
+- `components/public-menu/cart-drawer.tsx` — painel lateral com itens e pedido WA
+
+**Arquivos modificados**:
+- `components/public-menu/product-card.tsx` — botão + e controles +/- por item
+- `components/public-menu/public-menu-page.tsx` — wraps CartProvider, CartButton, CartDrawer
+- `lib/menu-utils.ts` — adiciona `buildWhatsappOrderUrl()`
+- `lib/i18n.ts` — chaves PT/ES do carrinho (cart.title, cart.order, cart.whatsappIntro…)
+- `types/menu.ts` — tipo `CartItem`
+
+**O que mudou**:
+Clientes do restaurante podem adicionar produtos ao carrinho diretamente do cardápio
+público. O painel lateral mostra os itens, quantidades e total. Ao clicar em "Fazer pedido",
+abre o WhatsApp com uma mensagem formatada contendo todos os itens e o total.
+O carrinho é persistido em localStorage por restaurante.
+
+**Por que**:
+Feature central do produto para gerar valor real para os restaurantes: pedidos
+chegam pelo WhatsApp já com os itens e valores, reduzindo erros e tempo de atendimento.
+
+**Impacto**:
+- Fase 5 encerrada
+- Cardápio público passa a ter fluxo de pedido completo
+- Nenhuma mudança no backend ou Firebase necessária
+
+---
+
+### [2026-06-18] Perf — cache offline do Firestore com IndexedDB
+
+**Fase**: transversal
+**Tipo**: perf
+**Arquivos modificados**:
+- `lib/firebase.ts`
+
+**O que mudou**:
+Firestore inicializado com `persistentLocalCache` + `persistentMultipleTabManager`
+no browser. Na segunda visita ao admin, os dados são servidos instantaneamente
+do IndexedDB e atualizados em segundo plano.
+
+**Por que**:
+O admin tinha um waterfall de 3 requests sequenciais ao abrir (auth → restaurant → categories+products),
+causando lentidão perceptível no sidebar. O cache offline resolve o problema para
+visitas repetidas sem alterar a lógica de dados.
+
+**Impacto**:
+- Segunda visita ao admin: quase instantânea
+- Funciona offline em modo leitura
+- Sem mudança de API ou componentes
+
+---
+
 ### [2026-06-18] Fase 3 iniciada — aparência visual do restaurante
 
 **Fase**: FASE 3

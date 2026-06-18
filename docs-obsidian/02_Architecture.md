@@ -1,6 +1,6 @@
 # 02 — Arquitetura Técnica
 
-> Última atualização: 2026-06-17
+> Última atualização: 2026-06-18
 > Relacionado: [[00_Index]] | [[03_Decisions]] | [[01_Project]]
 
 ---
@@ -52,15 +52,18 @@ Menulix/
 │   │   ├── admin-shell.tsx      # Layout protegido + navegação
 │   │   ├── admin-page-header.tsx
 │   │   └── public-link-panel.tsx # Copiar link + QR Code
-│   └── public-menu/             # Componentes da fase 1
-│       ├── public-menu-page.tsx     # Layout principal
+│   └── public-menu/             # Componentes da fase 1 + fase 5
+│       ├── public-menu-page.tsx     # Layout principal (wraps CartProvider)
 │       ├── restaurant-header.tsx    # Hero + info
 │       ├── category-section.tsx     # Grid de categorias
-│       ├── product-card.tsx         # Card de produto
+│       ├── product-card.tsx         # Card de produto + controles de carrinho
 │       ├── opening-hours.tsx        # Horários (sidebar)
 │       ├── status-pill.tsx          # Badge aberto/fechado
-│       ├── whatsapp-button.tsx      # CTA WhatsApp
-│       └── inactive-restaurant.tsx  # Estado inativo
+│       ├── whatsapp-button.tsx      # CTA WhatsApp simples
+│       ├── inactive-restaurant.tsx  # Estado inativo
+│       ├── cart-provider.tsx        # Contexto do carrinho (localStorage)
+│       ├── cart-button.tsx          # Botão flutuante com total e contagem
+│       └── cart-drawer.tsx          # Painel lateral com itens e pedido WA
 │
 ├── lib/
 │   ├── admin-firestore.ts       # CRUD admin + upload Storage
@@ -91,9 +94,10 @@ Todos os tipos estão centralizados em `types/menu.ts`.
 
 - Dicionário central: `lib/i18n.ts`
 - Provider global: `components/language-provider.tsx`
-- Seletor visual: `components/language-switcher.tsx`
+- Seletor visual: `components/language-switcher.tsx` — **visível apenas no painel admin** (sidebar)
 - Idioma padrão: `pt`
 - Idioma escolhido fica salvo em `localStorage`
+- No cardápio público: idioma detectado automaticamente pelo `navigator.language` do browser
 - Todo texto fixo novo de UI deve ser cadastrado nas chaves `pt` e `es`
 - Dados de restaurante, categorias e produtos não são traduzidos automaticamente
 
@@ -174,6 +178,14 @@ type OpeningHours = Partial<Record<Weekday, OpeningPeriod[]>>
 ### `RestaurantTemplate`
 ```typescript
 "pizzaria" | "hamburgueria" | "acai" | "marmitaria" | "cafeteria" | "sushi" | "doceria"
+```
+
+### `CartItem` (Fase 5 — client-side only)
+```typescript
+{
+  product: Product
+  quantity: number
+}
 ```
 
 ---
@@ -306,16 +318,44 @@ Ordenação feita client-side para evitar criação de índices no Firestore.
 | `formatCurrencyBRL(value)` | "R$ 29,90" |
 | `isRestaurantOpen(hours)` | Boolean baseado no horário atual |
 | `getTodaysOpeningLabel(hours, date, language)` | Label traduzido de horário do dia |
-| `buildWhatsappUrl(number, name, language)` | URL wa.me com mensagem traduzida |
+| `buildWhatsappUrl(number, name, language)` | URL wa.me com mensagem simples de contato |
+| `buildWhatsappOrderUrl(phone, items, language)` | URL wa.me com pedido formatado do carrinho |
 | `normalizeWhatsappNumber(num)` | Remove formatação, só dígitos |
 | `formatWeeklyOpeningHours(hours, language)` | Array traduzido para exibição na sidebar |
 
 ---
 
+## Carrinho de Pedidos (Fase 5)
+
+- Estado gerenciado por `CartProvider` (React Context + localStorage por restaurante)
+- Chave de storage: `menulix-cart-{restaurantId}` — isola carrinhos entre restaurantes
+- `CartButton`: botão flutuante, aparece apenas com items no carrinho
+- `CartDrawer`: painel lateral com controles de quantidade e botão de pedido WhatsApp
+- Mensagem formatada gerada por `buildWhatsappOrderUrl()` com itens, quantidades e total
+- Sem persistência em banco de dados — carrinho é 100% client-side
+
+---
+
 ## Integração WhatsApp
 
-Mensagem padrão ao clicar no botão:
+Dois fluxos:
+
+**Contato simples** (botão na sidebar do cardápio):
 > "Olá, vim pelo cardápio digital da Menulix e gostaria de fazer um pedido."
+
+**Pedido pelo carrinho** (botão no CartDrawer):
+```
+Olá! Gostaria de fazer o seguinte pedido:
+
+1x X-Burger — R$ 18,00
+2x Coca-Cola — R$ 12,00
+
+Total: R$ 30,00
+
+Nome:
+Endereço:
+Forma de pagamento:
+```
 
 URL gerada: `https://wa.me/[number]?text=[encoded_message]`
 
