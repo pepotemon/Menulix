@@ -17,10 +17,10 @@ export function CategorySection({ category, products }: CategorySectionProps) {
   }
 
   return (
-    <section aria-labelledby={category.id} className="scroll-mt-24">
+    <section id={category.id} aria-labelledby={`label-${category.id}`} className="scroll-mt-20">
       <div className="mb-3 flex items-end justify-between gap-4">
         <h2
-          id={category.id}
+          id={`label-${category.id}`}
           className="text-xl font-black text-[var(--restaurant-text)]"
         >
           {category.name}
