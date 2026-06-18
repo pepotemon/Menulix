@@ -33,9 +33,11 @@ export function LanguageProvider({
   const [language, setLanguageState] = useState<Language>(defaultLanguage);
 
   useEffect(() => {
-    const storedLanguage = window.localStorage.getItem(storageKey);
-    if (storedLanguage === "pt" || storedLanguage === "es") {
-      setLanguageState(storedLanguage);
+    const stored = window.localStorage.getItem(storageKey);
+    if (stored === "pt" || stored === "es") {
+      setLanguageState(stored);
+    } else if (navigator.language.toLowerCase().startsWith("es")) {
+      setLanguageState("es");
     }
   }, []);
 

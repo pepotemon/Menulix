@@ -10,7 +10,7 @@ export function LanguageSwitcher(): JSX.Element {
   const { language, setLanguage, t } = useI18n();
 
   return (
-    <div className="fixed bottom-4 left-3 z-50 flex items-center gap-1 rounded-full border border-line bg-white/95 p-1 text-ink shadow-soft backdrop-blur sm:bottom-auto sm:left-auto sm:right-3 sm:top-3">
+    <div className="flex items-center gap-1 rounded-full border border-line bg-white/95 p-1 text-ink shadow-soft backdrop-blur">
       <span className="sr-only">{t("language.switch")}</span>
       <Languages aria-hidden="true" className="ml-2 h-4 w-4 text-ink/50" />
       {languageOptions.map((option) => (

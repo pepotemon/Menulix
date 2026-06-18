@@ -13,6 +13,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useAuth } from "@/components/admin/auth-provider";
 import { useI18n } from "@/components/language-provider";
+import { LanguageSwitcher } from "@/components/language-switcher";
 
 const navItems = [
   { href: "/admin", labelKey: "admin.nav.home", icon: LayoutDashboard },
@@ -80,7 +81,7 @@ export function AdminShell({ children }: AdminShellProps): JSX.Element {
             </button>
           </div>
 
-          <nav className="mt-5 flex gap-2 overflow-x-auto md:flex-col md:overflow-visible">
+          <nav className="mt-5 flex gap-2 overflow-x-auto md:flex-col md:overflow-visible" aria-label="Navegação principal">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.href;
@@ -100,6 +101,9 @@ export function AdminShell({ children }: AdminShellProps): JSX.Element {
                 </Link>
               );
             })}
+            <div className="flex shrink-0 items-center md:hidden">
+              <LanguageSwitcher />
+            </div>
           </nav>
 
           <button
@@ -110,6 +114,10 @@ export function AdminShell({ children }: AdminShellProps): JSX.Element {
             <LogOut size={18} />
             {t("admin.nav.logout")}
           </button>
+
+          <div className="mt-4 hidden md:flex">
+            <LanguageSwitcher />
+          </div>
         </aside>
 
         <section className="flex-1 px-4 py-6 sm:px-6 lg:px-8">{children}</section>
