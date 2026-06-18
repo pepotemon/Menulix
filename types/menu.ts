@@ -80,6 +80,11 @@ export type PublicMenu = {
   products: Product[];
 };
 
+export type CartItem = {
+  product: Product;
+  quantity: number;
+};
+
 export type RestaurantFormInput = {
   name: string;
   slug: string;

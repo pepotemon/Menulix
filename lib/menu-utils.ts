@@ -1,4 +1,4 @@
-import type { OpeningHours, Weekday } from "@/types/menu";
+import type { CartItem, OpeningHours, Weekday } from "@/types/menu";
 import { dictionary, defaultLanguage, type Language } from "@/lib/i18n";
 
 const weekdays: Weekday[] = [
@@ -30,6 +30,29 @@ export function formatCurrencyBRL(value: number) {
 
 export function normalizeWhatsappNumber(value: string) {
   return value.replace(/\D/g, "");
+}
+
+export function buildWhatsappOrderUrl(
+  phone: string,
+  items: CartItem[],
+  language: Language = defaultLanguage
+): string {
+  const intro = dictionary[language]["cart.whatsappIntro"];
+  const itemLines = items
+    .map(({ product, quantity }) =>
+      `${quantity}x ${product.name} — ${formatCurrencyBRL(product.price * quantity)}`
+    )
+    .join("\n");
+  const total = items.reduce(
+    (sum, { product, quantity }) => sum + product.price * quantity,
+    0
+  );
+  const nameLabel = dictionary[language]["cart.whatsappName"];
+  const addressLabel = dictionary[language]["cart.whatsappAddress"];
+  const paymentLabel = dictionary[language]["cart.whatsappPayment"];
+  const message = `${intro}\n\n${itemLines}\n\nTotal: ${formatCurrencyBRL(total)}\n\n${nameLabel}\n${addressLabel}\n${paymentLabel}`;
+
+  return `https://wa.me/${normalizeWhatsappNumber(phone)}?text=${encodeURIComponent(message)}`;
 }
 
 export function buildWhatsappUrl(

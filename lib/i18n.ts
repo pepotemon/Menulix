@@ -183,7 +183,18 @@ export const dictionary = {
     "menu.weekday.sunday": "Domingo",
     "whatsapp.message":
       "Olá, vim pelo cardápio digital da Menulix e gostaria de fazer um pedido.",
-    "language.switch": "Idioma"
+    "language.switch": "Idioma",
+    "cart.title": "Meu pedido",
+    "cart.empty": "Carrinho vazio",
+    "cart.emptyDescription": "Toque no + de qualquer produto para começar.",
+    "cart.total": "Total",
+    "cart.clear": "Limpar",
+    "cart.order": "Fazer pedido",
+    "cart.add": "Adicionar",
+    "cart.whatsappIntro": "Olá! Gostaria de fazer o seguinte pedido:",
+    "cart.whatsappName": "Nome:",
+    "cart.whatsappAddress": "Endereço:",
+    "cart.whatsappPayment": "Forma de pagamento:"
   },
   es: {
     "admin.brand.subtitle": "Mi menú",
@@ -359,7 +370,18 @@ export const dictionary = {
     "menu.weekday.sunday": "Domingo",
     "whatsapp.message":
       "Hola, vengo por el menú digital de Menulix y me gustaría hacer un pedido.",
-    "language.switch": "Idioma"
+    "language.switch": "Idioma",
+    "cart.title": "Mi pedido",
+    "cart.empty": "Carrito vacío",
+    "cart.emptyDescription": "Toca el + de cualquier producto para comenzar.",
+    "cart.total": "Total",
+    "cart.clear": "Limpiar",
+    "cart.order": "Hacer pedido",
+    "cart.add": "Agregar",
+    "cart.whatsappIntro": "¡Hola! Me gustaría hacer el siguiente pedido:",
+    "cart.whatsappName": "Nombre:",
+    "cart.whatsappAddress": "Dirección:",
+    "cart.whatsappPayment": "Forma de pago:"
   }
 } satisfies Record<Language, Record<string, string>>;
 

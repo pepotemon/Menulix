@@ -1,8 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { BadgePercent, CircleSlash2 } from "lucide-react";
+import { BadgePercent, CircleSlash2, Minus, Plus } from "lucide-react";
 import { useI18n } from "@/components/language-provider";
+import { useCart } from "@/components/public-menu/cart-provider";
 import type { Product } from "@/types/menu";
 import { formatCurrencyBRL } from "@/lib/menu-utils";
 
@@ -12,6 +13,10 @@ type ProductCardProps = {
 
 export function ProductCard({ product }: ProductCardProps) {
   const { t } = useI18n();
+  const { items, addItem, removeItem } = useCart();
+
+  const cartItem = items.find((item) => item.product.id === product.id);
+  const quantity = cartItem?.quantity ?? 0;
 
   return (
     <article className="grid grid-cols-[88px_1fr] gap-3 rounded-lg border border-line bg-white p-3 shadow-sm sm:grid-cols-[120px_1fr] sm:gap-4">
@@ -51,11 +56,34 @@ export function ProductCard({ product }: ProductCardProps) {
           <strong className="text-lg font-black text-ink">
             {formatCurrencyBRL(product.price)}
           </strong>
-          {product.isFeatured ? (
-            <span className="rounded-full border border-[var(--restaurant-secondary)] px-2.5 py-1 text-xs font-bold text-[var(--restaurant-secondary)]">
-              {t("public.promo")}
-            </span>
-          ) : null}
+
+          {product.isAvailable && (
+            <div className="flex items-center gap-2">
+              {quantity > 0 ? (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => removeItem(product.id)}
+                    aria-label={`Remover ${product.name}`}
+                    className="flex h-8 w-8 items-center justify-center rounded-full border border-line bg-cream text-ink transition hover:border-tomato hover:text-tomato"
+                  >
+                    <Minus aria-hidden="true" className="h-3.5 w-3.5" />
+                  </button>
+                  <span className="w-5 text-center text-sm font-black text-ink">
+                    {quantity}
+                  </span>
+                </>
+              ) : null}
+              <button
+                type="button"
+                onClick={() => addItem(product)}
+                aria-label={`${t("cart.add")} ${product.name}`}
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--restaurant-primary)] text-white transition hover:brightness-90"
+              >
+                <Plus aria-hidden="true" className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </article>
