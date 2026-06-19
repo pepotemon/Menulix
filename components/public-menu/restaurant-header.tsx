@@ -70,6 +70,7 @@ export function RestaurantHeader({ restaurant }: RestaurantHeaderProps) {
 
           <WhatsappButton
             phone={restaurant.whatsapp}
+            restaurantId={restaurant.id}
             restaurantName={restaurant.name}
           />
         </div>

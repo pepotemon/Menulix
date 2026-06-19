@@ -3,13 +3,18 @@
 import { Minus, Plus, ShoppingBag, X } from "lucide-react";
 import { useCart } from "@/components/public-menu/cart-provider";
 import { useI18n } from "@/components/language-provider";
+import { trackAnalyticsEvent } from "@/lib/analytics";
 import { buildWhatsappOrderUrl, formatCurrencyBRL } from "@/lib/menu-utils";
 
 type CartDrawerProps = {
   phone: string;
+  restaurantId: string;
 };
 
-export function CartDrawer({ phone }: CartDrawerProps): JSX.Element | null {
+export function CartDrawer({
+  phone,
+  restaurantId
+}: CartDrawerProps): JSX.Element | null {
   const { items, totalPrice, isOpen, closeCart, addItem, removeItem, clearCart } = useCart();
   const { t, language } = useI18n();
 
@@ -112,6 +117,15 @@ export function CartDrawer({ phone }: CartDrawerProps): JSX.Element | null {
             </div>
             <a
               href={orderUrl}
+              onClick={() => {
+                void trackAnalyticsEvent({
+                  restaurantId,
+                  type: "cart_order_sent",
+                  total: totalPrice,
+                  itemCount: items.reduce((total, item) => total + item.quantity, 0),
+                  language
+                });
+              }}
               target="_blank"
               rel="noopener noreferrer"
               className="flex min-h-12 w-full items-center justify-center gap-2 rounded-lg bg-[var(--restaurant-primary)] px-4 py-3 text-sm font-bold text-white transition hover:brightness-90"

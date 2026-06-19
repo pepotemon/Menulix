@@ -215,6 +215,20 @@ Cada decisão usa o formato:
 
 ---
 
+## [DEC-016] Estatísticas próprias em Firestore antes de ferramenta externa
+
+**Data**: 2026-06-19
+**Contexto**: A Fase 6 precisa entregar estatísticas úteis para donos de restaurante sem adicionar complexidade de configuração, consentimento ou dashboards externos.
+**Decisão**: Criar a coleção `analyticsEvents` no Firestore e registrar eventos simples do cardápio público: visita, clique em categoria, produto adicionado, clique no WhatsApp e pedido enviado pelo carrinho. O admin lê os eventos do próprio restaurante e calcula um resumo inicial no cliente.
+**Alternativas descartadas**: Google Analytics/GA4, Plausible, logs em Cloud Functions, agregações server-side imediatas.
+**Consequências**:
+- Entrega rápida, integrada ao Firebase já usado no projeto
+- Regras do Firestore conseguem isolar leitura por `restaurantId`
+- A primeira versão não depende de cookies externos nem scripts de terceiros
+- Futuramente pode evoluir para agregações diárias ou Cloud Functions se o volume crescer
+
+---
+
 ## Decisões Pendentes
 
 - [ ] Armazenamento de preços: float vs centavos inteiros no Firestore

@@ -1,6 +1,7 @@
 "use client";
 
 import type { CSSProperties } from "react";
+import { useEffect } from "react";
 import type { PublicMenu } from "@/types/menu";
 import { useI18n } from "@/components/language-provider";
 import { CartButton } from "@/components/public-menu/cart-button";
@@ -10,13 +11,14 @@ import { CategorySection } from "@/components/public-menu/category-section";
 import { OpeningHours } from "@/components/public-menu/opening-hours";
 import { RestaurantHeader } from "@/components/public-menu/restaurant-header";
 import { WhatsappButton } from "@/components/public-menu/whatsapp-button";
+import { trackAnalyticsEvent } from "@/lib/analytics";
 
 type PublicMenuPageProps = {
   menu: PublicMenu;
 };
 
 export function PublicMenuPage({ menu }: PublicMenuPageProps) {
-  const { t } = useI18n();
+  const { language, t } = useI18n();
   const { restaurant, categories, products } = menu;
   const themeStyle = {
     "--restaurant-primary": restaurant.theme.primaryColor,
@@ -24,6 +26,14 @@ export function PublicMenuPage({ menu }: PublicMenuPageProps) {
     "--restaurant-bg": restaurant.theme.backgroundColor,
     "--restaurant-text": restaurant.theme.textColor
   } as CSSProperties;
+
+  useEffect(() => {
+    void trackAnalyticsEvent({
+      restaurantId: restaurant.id,
+      type: "menu_view",
+      language
+    });
+  }, [language, restaurant.id]);
 
   return (
     <CartProvider restaurantId={restaurant.id}>
@@ -43,6 +53,15 @@ export function PublicMenuPage({ menu }: PublicMenuPageProps) {
                 key={category.id}
                 className="whitespace-nowrap rounded-full border border-line bg-white px-4 py-2 text-sm font-bold text-[var(--restaurant-text)] transition hover:border-[var(--restaurant-secondary)] hover:text-[var(--restaurant-secondary)]"
                 href={`#${category.id}`}
+                onClick={() => {
+                  void trackAnalyticsEvent({
+                    restaurantId: restaurant.id,
+                    type: "category_click",
+                    categoryId: category.id,
+                    categoryName: category.name,
+                    language
+                  });
+                }}
               >
                 {category.name}
               </a>
@@ -72,6 +91,7 @@ export function PublicMenuPage({ menu }: PublicMenuPageProps) {
               </p>
               <WhatsappButton
                 phone={restaurant.whatsapp}
+                restaurantId={restaurant.id}
                 restaurantName={restaurant.name}
               />
             </section>
@@ -79,7 +99,7 @@ export function PublicMenuPage({ menu }: PublicMenuPageProps) {
         </div>
 
         <CartButton />
-        <CartDrawer phone={restaurant.whatsapp} />
+        <CartDrawer phone={restaurant.whatsapp} restaurantId={restaurant.id} />
       </main>
     </CartProvider>
   );

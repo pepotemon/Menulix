@@ -31,6 +31,46 @@ O que isso afeta.
 
 ---
 
+### [2026-06-19] Fase 6 — estatísticas iniciais
+
+**Fase**: FASE 6
+**Tipo**: feat
+**Arquivos criados/modificados**:
+- `app/admin/estatisticas/page.tsx` — nova tela de estatísticas do restaurante
+- `lib/analytics.ts` — registro e agregação de eventos de uso
+- `types/menu.ts` — tipos `AnalyticsEvent`, `AnalyticsEventType` e `AnalyticsSummary`
+- `components/admin/admin-shell.tsx` — item "Estatísticas" na navegação
+- `app/admin/page.tsx` — atalho para estatísticas no dashboard
+- `components/public-menu/public-menu-page.tsx` — evento de visita e clique em categoria
+- `components/public-menu/product-card.tsx` — evento de produto adicionado
+- `components/public-menu/whatsapp-button.tsx` — evento de clique no WhatsApp
+- `components/public-menu/cart-drawer.tsx` — evento de pedido enviado
+- `lib/i18n.ts` — chaves PT/ES da nova tela
+- `firestore.rules` — regras para `analyticsEvents`
+- `docs-obsidian/02_Architecture.md` — arquitetura da Fase 6
+- `docs-obsidian/03_Decisions.md` — DEC-016
+- `docs-obsidian/05_Ideas.md` — backlog da Fase 6
+- `docs-obsidian/09_Glossary.md` — termos de analytics
+- `docs-obsidian/Daily/2026-06-19.md` — plano da fase
+- `AGENTS.md` e `docs-obsidian/00_Index.md` — status da fase
+
+**O que mudou**:
+Criada a primeira versão da Fase 6. O cardápio público passa a registrar eventos
+simples em Firestore e o painel admin ganhou a rota `/admin/estatisticas` com
+visitas, produtos clicados, cliques no WhatsApp, pedidos enviados, total estimado
+e atividade recente.
+
+**Por que**:
+Donos de restaurante precisam entender se o cardápio está sendo usado sem lidar
+com ferramentas externas de analytics.
+
+**Impacto**:
+- Nova coleção Firestore `analyticsEvents`
+- Requer deploy atualizado de `firestore.rules`
+- Métricas aparecem conforme clientes acessam o cardápio público
+
+---
+
 ### [2026-06-18] Fix UX — seletor de idioma movido para o admin
 
 **Fase**: FASE 3 / transversal

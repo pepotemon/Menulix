@@ -44,5 +44,20 @@ service cloud.firestore {
         && ownsRestaurant(resource.data.restaurantId);
       allow delete: if signedIn() && ownsRestaurant(resource.data.restaurantId);
     }
+
+    // Eventos de estatisticas: criacao publica, leitura apenas pelo dono.
+    match /analyticsEvents/{eventId} {
+      allow create: if request.resource.data.restaurantId is string
+        && request.resource.data.type in [
+          "menu_view",
+          "category_click",
+          "product_click",
+          "whatsapp_click",
+          "cart_order_sent"
+        ]
+        && request.resource.data.createdAt == request.time;
+      allow read: if ownsRestaurant(resource.data.restaurantId);
+      allow update, delete: if false;
+    }
   }
 }

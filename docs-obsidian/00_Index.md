@@ -27,7 +27,8 @@
 ```
 Fase atual:    FASE 3 — Personalização visual 🚧 (em pausa para polimento)
                FASE 5 — Carrinho + WhatsApp ✅ implementada
-Próxima fase:  FASE 4 — Planos e monetização (adiada) | FASE 6 — Estatísticas
+               FASE 6 — Estatísticas 🚧 em desenvolvimento
+Próxima fase:  FASE 4 — Planos e monetização (adiada) | FASE 7 — Admin interno
 Firebase:      Firestore + Auth + Storage conectados + cache offline IndexedDB ativo
 Deploy:        Vercel (variáveis de ambiente pendentes de configuração)
 ```
@@ -41,7 +42,7 @@ Deploy:        Vercel (variáveis de ambiente pendentes de configuração)
 - [ ] **FASE 3** — Personalização visual 🚧 (em pausa para polimento)
 - [ ] **FASE 4** — Planos e monetização ⏳ (adiada)
 - [x] **FASE 5** — Carrinho + pedidos por WhatsApp ✅
-- [ ] **FASE 6** — Estatísticas
+- [ ] **FASE 6** — Estatísticas 🚧
 - [ ] **FASE 7** — Admin interno Menulix
 
 ---

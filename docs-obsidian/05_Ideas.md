@@ -59,6 +59,25 @@ Forma de pagamento:
 
 ---
 
+## Fase 6 — Estatísticas 🚧 Em desenvolvimento
+
+🚧 **Eventos públicos simples**:
+- Visita ao cardápio
+- Clique em categoria
+- Produto adicionado ao carrinho
+- Clique no WhatsApp
+- Pedido enviado pelo carrinho
+
+🚧 **Painel de estatísticas no admin**:
+- Visitas ao cardápio
+- Produtos mais clicados
+- Cliques no WhatsApp
+- Pedidos enviados
+- Total estimado dos pedidos enviados
+- Atividade recente
+
+---
+
 ## Ideias Futuras (Não Planejadas)
 
 ### 💡 Cardápio em múltiplos idiomas

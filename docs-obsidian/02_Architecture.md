@@ -37,6 +37,7 @@ Menulix/
 │   │   ├── login/page.tsx       # Login Firebase Auth
 │   │   ├── page.tsx             # Meu cardápio: ações, status, link e QR
 │   │   ├── aparencia/page.tsx   # Fase 3: cores, template, logo e banner
+│   │   ├── estatisticas/page.tsx # Fase 6: métricas simples do cardápio
 │   │   ├── restaurante/page.tsx # CRUD de informações do restaurante
 │   │   ├── categorias/page.tsx  # CRUD de categorias
 │   │   └── produtos/page.tsx    # CRUD de produtos + upload de imagem
@@ -68,6 +69,7 @@ Menulix/
 ├── lib/
 │   ├── admin-firestore.ts       # CRUD admin + upload Storage
 │   ├── firebase.ts              # Firebase app, Auth, Firestore e Storage
+│   ├── analytics.ts             # Eventos e agregações de estatísticas
 │   ├── firestore.ts             # Queries públicas do cardápio
 │   ├── i18n.ts                  # Dicionário PT/ES e tipos de tradução
 │   ├── menu-data.ts             # Dados mockados de referência
@@ -188,6 +190,37 @@ type OpeningHours = Partial<Record<Weekday, OpeningPeriod[]>>
 }
 ```
 
+### `AnalyticsEvent` (Fase 6)
+```typescript
+{
+  id: string
+  restaurantId: string
+  type: "menu_view" | "category_click" | "product_click" | "whatsapp_click" | "cart_order_sent"
+  productId?: string
+  productName?: string
+  categoryId?: string
+  categoryName?: string
+  total?: number
+  itemCount?: number
+  language?: string
+  createdAt: string
+}
+```
+
+### `AnalyticsSummary` (Fase 6)
+```typescript
+{
+  menuViews: number
+  categoryClicks: number
+  productClicks: number
+  whatsappClicks: number
+  cartOrdersSent: number
+  estimatedRevenue: number
+  topProducts: Array<{ productId: string; productName: string; clicks: number }>
+  recentEvents: AnalyticsEvent[]
+}
+```
+
 ---
 
 ## Design System
@@ -287,6 +320,13 @@ Ordenação feita client-side para evitar criação de índices no Firestore.
 | `uploadRestaurantAsset(id, kind, file)` | Upload de logo/banner para Storage |
 | `slugifyRestaurantName(value)` | Normaliza slug editável |
 
+## Arquivos de Estatísticas (`lib/analytics.ts`)
+
+| Função | Propósito |
+|--------|-----------|
+| `trackAnalyticsEvent(input)` | Registra eventos públicos do cardápio em `analyticsEvents` |
+| `getRestaurantAnalytics(restaurantId)` | Lê eventos do restaurante e calcula o resumo do admin |
+
 ## Coleções no Firestore
 
 | Coleção | Documentos | Isolamento |
@@ -294,12 +334,15 @@ Ordenação feita client-side para evitar criação de índices no Firestore.
 | `restaurants` | Um por restaurante | `ownerId` |
 | `categories` | Todas as categorias | Por `restaurantId` |
 | `products` | Todos os produtos | Por `restaurantId` |
+| `analyticsEvents` | Eventos de uso do cardápio | Por `restaurantId` |
 
 ## Regras de Segurança (`firestore.rules`)
 
 - Leitura pública em todas as coleções
 - Escrita de `restaurants` apenas quando `ownerId == request.auth.uid`
 - Escrita de `categories` e `products` apenas quando o restaurante pertence ao usuário
+- Criação pública de `analyticsEvents` com tipos permitidos
+- Leitura de `analyticsEvents` apenas quando o restaurante pertence ao usuário
 - Delete de restaurante bloqueado
 - Deploy pendente de reautenticação do Firebase CLI
 
@@ -333,6 +376,22 @@ Ordenação feita client-side para evitar criação de índices no Firestore.
 - `CartDrawer`: painel lateral com controles de quantidade e botão de pedido WhatsApp
 - Mensagem formatada gerada por `buildWhatsappOrderUrl()` com itens, quantidades e total
 - Sem persistência em banco de dados — carrinho é 100% client-side
+
+---
+
+## Estatísticas (Fase 6)
+
+- Rota admin: `/admin/estatisticas`
+- Navegação adicionada no painel admin como "Estatísticas"
+- Eventos registrados no cardápio público:
+  - `menu_view`: cliente abriu o cardápio
+  - `category_click`: cliente tocou em uma categoria
+  - `product_click`: cliente adicionou produto ao carrinho
+  - `whatsapp_click`: cliente abriu o WhatsApp pelo CTA simples
+  - `cart_order_sent`: cliente enviou pedido pelo carrinho
+- O painel mostra visitas, produtos clicados, cliques no WhatsApp, pedidos enviados, total estimado e atividade recente
+- A primeira versão calcula agregações no cliente a partir dos eventos lidos do Firestore
+- Eventos não bloqueiam navegação nem pedido: falhas de analytics são ignoradas no fluxo público
 
 ---
 

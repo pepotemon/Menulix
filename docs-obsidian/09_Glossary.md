@@ -36,6 +36,8 @@
 | **OpeningHours** | Tipo que mapeia dias da semana a períodos de funcionamento |
 | **RestaurantTheme** | Objeto com cores personalizadas por restaurante |
 | **RestaurantTemplate** | Tipo de template visual usado como preset de cores por segmento |
+| **AnalyticsEvent** | Evento de uso do cardápio público registrado para estatísticas |
+| **AnalyticsSummary** | Resumo calculado para exibir métricas no painel admin |
 | **Branding** | Imagens e cores que identificam visualmente o restaurante, como logo e banner |
 | **`generateStaticParams`** | Função do Next.js que pré-gera rotas dinâmicas no build |
 | **`isActive`** | Flag booleana que controla se um restaurante/categoria/produto está visível |

@@ -85,6 +85,42 @@ export type CartItem = {
   quantity: number;
 };
 
+export type AnalyticsEventType =
+  | "menu_view"
+  | "category_click"
+  | "product_click"
+  | "whatsapp_click"
+  | "cart_order_sent";
+
+export type AnalyticsEvent = {
+  id: string;
+  restaurantId: string;
+  type: AnalyticsEventType;
+  productId?: string;
+  productName?: string;
+  categoryId?: string;
+  categoryName?: string;
+  total?: number;
+  itemCount?: number;
+  language?: string;
+  createdAt: string;
+};
+
+export type AnalyticsSummary = {
+  menuViews: number;
+  categoryClicks: number;
+  productClicks: number;
+  whatsappClicks: number;
+  cartOrdersSent: number;
+  estimatedRevenue: number;
+  topProducts: Array<{
+    productId: string;
+    productName: string;
+    clicks: number;
+  }>;
+  recentEvents: AnalyticsEvent[];
+};
+
 export type RestaurantFormInput = {
   name: string;
   slug: string;

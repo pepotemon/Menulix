@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  BarChart3,
   ClipboardList,
   FolderTree,
   LayoutDashboard,
@@ -20,6 +21,7 @@ const navItems = [
   { href: "/admin/produtos", labelKey: "admin.nav.products", icon: ClipboardList },
   { href: "/admin/categorias", labelKey: "admin.nav.categories", icon: FolderTree },
   { href: "/admin/aparencia", labelKey: "admin.nav.appearance", icon: Palette },
+  { href: "/admin/estatisticas", labelKey: "admin.nav.analytics", icon: BarChart3 },
   { href: "/admin/restaurante", labelKey: "admin.nav.info", icon: Store }
 ] as const;
 

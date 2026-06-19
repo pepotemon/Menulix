@@ -5,6 +5,7 @@ import { BadgePercent, CircleSlash2, Minus, Plus } from "lucide-react";
 import { useI18n } from "@/components/language-provider";
 import { useCart } from "@/components/public-menu/cart-provider";
 import type { Product } from "@/types/menu";
+import { trackAnalyticsEvent } from "@/lib/analytics";
 import { formatCurrencyBRL } from "@/lib/menu-utils";
 
 type ProductCardProps = {
@@ -12,7 +13,7 @@ type ProductCardProps = {
 };
 
 export function ProductCard({ product }: ProductCardProps) {
-  const { t } = useI18n();
+  const { language, t } = useI18n();
   const { items, addItem, removeItem } = useCart();
 
   const cartItem = items.find((item) => item.product.id === product.id);
@@ -76,7 +77,17 @@ export function ProductCard({ product }: ProductCardProps) {
               ) : null}
               <button
                 type="button"
-                onClick={() => addItem(product)}
+                onClick={() => {
+                  addItem(product);
+                  void trackAnalyticsEvent({
+                    restaurantId: product.restaurantId,
+                    type: "product_click",
+                    productId: product.id,
+                    productName: product.name,
+                    categoryId: product.categoryId,
+                    language
+                  });
+                }}
                 aria-label={`${t("cart.add")} ${product.name}`}
                 className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--restaurant-primary)] text-white transition hover:brightness-90"
               >
