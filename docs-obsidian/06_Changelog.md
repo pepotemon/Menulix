@@ -31,6 +31,33 @@ O que isso afeta.
 
 ---
 
+### [2026-06-19] Fix UX — polimento da aparência
+
+**Fase**: FASE 3
+**Tipo**: fix
+**Arquivos modificados**:
+- `app/admin/aparencia/page.tsx`
+- `components/public-menu/restaurant-header.tsx`
+- `docs-obsidian/04_Errors.md`
+- `docs-obsidian/06_Changelog.md`
+
+**O que mudou**:
+A tela de aparência agora mostra preview instantânea do logo e banner selecionados,
+mesmo antes do upload/salvamento. Após salvar, o formulário recebe as URLs finais.
+A preview do perfil no admin foi redesenhada com proporções melhores, e o header
+público foi ajustado para ficar mais equilibrado em mobile e desktop.
+
+**Por que**:
+O usuário precisava ver imediatamente as imagens carregadas e a visualização do
+perfil estava pouco otimizada.
+
+**Impacto**:
+- Fase 3 fica mais confiável e visualmente polida
+- Dono do restaurante tem feedback imediato ao escolher imagens
+- Header público reduz risco de layout pesado ou mal encaixado em telas pequenas
+
+---
+
 ### [2026-06-19] Fase 6 — estatísticas iniciais
 
 **Fase**: FASE 6

@@ -22,6 +22,17 @@
 
 ## Erros Registrados
 
+### [ERR-003] Preview de aparência não atualizava logo e banner selecionados
+
+**Data**: 2026-06-19
+**Arquivo**: `app/admin/aparencia/page.tsx`, `components/public-menu/restaurant-header.tsx`
+**Sintoma**: Ao selecionar arquivo de logo ou banner no painel de aparência, a vista prévia continuava mostrando as imagens antigas. A área de perfil/header também ficava pouco otimizada em telas menores.
+**Causa raiz**: A preview usava apenas `form.logoUrl` e `form.bannerUrl`, que representam URLs já salvas. Arquivos recém-selecionados ficavam apenas em estado separado (`logoFile`/`bannerFile`) e não geravam preview local. O header público tinha proporções rígidas para mobile.
+**Solução**: Criada preview instantânea via `URL.createObjectURL()` para logo e banner selecionados, atualização do formulário com as URLs finais após salvar e polimento visual da preview/admin e do header público.
+**Prevenção**: Quando houver upload de imagem no admin, sempre exibir preview local do arquivo selecionado antes do upload e validar o layout em mobile.
+
+---
+
 ### [ERR-002] Inputs numéricos do admin não podiam ficar vazios
 
 **Data**: 2026-06-17

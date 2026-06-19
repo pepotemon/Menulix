@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { FormEvent, useEffect, useState } from "react";
-import { ImagePlus, Palette } from "lucide-react";
+import { ImagePlus, Palette, Smartphone } from "lucide-react";
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { useAdminData } from "@/components/admin/admin-data-provider";
 import { useI18n } from "@/components/language-provider";
@@ -99,6 +99,8 @@ export default function AdminAppearancePage(): JSX.Element {
   const [bannerFile, setBannerFile] = useState<File | null>(null);
   const [statusMessage, setStatusMessage] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+  const [logoPreviewUrl, setLogoPreviewUrl] = useState("");
+  const [bannerPreviewUrl, setBannerPreviewUrl] = useState("");
 
   useEffect(() => {
     if (!restaurant) return;
@@ -110,6 +112,30 @@ export default function AdminAppearancePage(): JSX.Element {
       theme: restaurant.theme
     });
   }, [restaurant]);
+
+  useEffect(() => {
+    if (!logoFile) {
+      setLogoPreviewUrl("");
+      return;
+    }
+
+    const objectUrl = URL.createObjectURL(logoFile);
+    setLogoPreviewUrl(objectUrl);
+
+    return () => URL.revokeObjectURL(objectUrl);
+  }, [logoFile]);
+
+  useEffect(() => {
+    if (!bannerFile) {
+      setBannerPreviewUrl("");
+      return;
+    }
+
+    const objectUrl = URL.createObjectURL(bannerFile);
+    setBannerPreviewUrl(objectUrl);
+
+    return () => URL.revokeObjectURL(objectUrl);
+  }, [bannerFile]);
 
   function handleTemplateChange(template: RestaurantTemplate): void {
     const preset = templatePresets.find((item) => item.id === template);
@@ -164,6 +190,15 @@ export default function AdminAppearancePage(): JSX.Element {
         logoUrl,
         bannerUrl
       });
+      setForm((current) =>
+        current
+          ? {
+              ...current,
+              logoUrl,
+              bannerUrl
+            }
+          : current
+      );
       await refresh();
       setLogoFile(null);
       setBannerFile(null);
@@ -183,6 +218,9 @@ export default function AdminAppearancePage(): JSX.Element {
       />
     );
   }
+
+  const previewLogoUrl = logoPreviewUrl || form.logoUrl;
+  const previewBannerUrl = bannerPreviewUrl || form.bannerUrl;
 
   return (
     <>
@@ -337,54 +375,66 @@ export default function AdminAppearancePage(): JSX.Element {
 
         <aside className="rounded-md border border-line bg-white p-5 shadow-soft xl:sticky xl:top-6 xl:self-start">
           <div className="mb-4 flex items-center gap-2">
-            <Palette size={20} className="text-leaf" />
+            <Smartphone size={20} className="text-leaf" />
             <h2 className="text-lg font-black text-ink">
               {t("admin.appearance.preview")}
             </h2>
           </div>
           <div
-            className="overflow-hidden rounded-md border border-line"
+            className="overflow-hidden rounded-lg border border-line shadow-soft"
             style={{
               backgroundColor: form.theme.backgroundColor,
               color: form.theme.textColor
             }}
           >
             <div
-              className="relative h-36"
+              className="relative h-44"
               style={{ backgroundColor: form.theme.primaryColor }}
             >
-              {form.bannerUrl ? (
+              {previewBannerUrl ? (
                 <Image
                   alt=""
-                  src={form.bannerUrl}
+                  src={previewBannerUrl}
                   fill
                   sizes="360px"
                   className="object-cover"
                   unoptimized
                 />
               ) : null}
-              <div className="absolute inset-0 bg-ink/35" />
+              <div className="absolute inset-0 bg-gradient-to-t from-ink/75 via-ink/35 to-ink/10" />
+              <div className="absolute bottom-4 left-4 right-4">
+                <span className="inline-flex rounded-full bg-white/18 px-3 py-1 text-xs font-bold text-white backdrop-blur">
+                  {t("public.header.badge")}
+                </span>
+              </div>
             </div>
-            <div className="p-4">
-              <div className="-mt-12 mb-3 h-20 w-20 overflow-hidden rounded-md border-4 border-white bg-white shadow-soft">
-                {form.logoUrl ? (
+            <div className="relative px-4 pb-5 pt-0">
+              <div className="-mt-12 mb-4 h-24 w-24 overflow-hidden rounded-lg border-4 border-white bg-white shadow-soft">
+                {previewLogoUrl ? (
                   <Image
                     alt=""
-                    src={form.logoUrl}
-                    width={80}
-                    height={80}
+                    src={previewLogoUrl}
+                    width={96}
+                    height={96}
                     className="h-full w-full object-cover"
                     unoptimized
                   />
-                ) : null}
+                ) : (
+                  <div
+                    className="flex h-full w-full items-center justify-center"
+                    style={{ color: form.theme.primaryColor }}
+                  >
+                    <Palette aria-hidden="true" size={28} />
+                  </div>
+                )}
               </div>
-              <p className="text-xl font-black">{restaurant.name}</p>
-              <p className="mt-2 text-sm leading-6 opacity-75">
+              <p className="text-2xl font-black leading-tight">{restaurant.name}</p>
+              <p className="mt-2 line-clamp-3 text-sm leading-6 opacity-75">
                 {restaurant.description}
               </p>
               <button
                 type="button"
-                className="mt-4 min-h-11 rounded-md px-4 py-2 text-sm font-black text-white"
+                className="mt-4 min-h-11 w-full rounded-md px-4 py-2 text-sm font-black text-white"
                 style={{ backgroundColor: form.theme.primaryColor }}
               >
                 {t("public.whatsapp")}
