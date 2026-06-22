@@ -31,6 +31,32 @@ O que isso afeta.
 
 ---
 
+### [2026-06-22] UX admin — aparência guiada com prévia em tempo real
+
+**Fase**: FASE 3
+**Tipo**: feat
+**Arquivos modificados**:
+- `app/admin/aparencia/page.tsx`
+- `lib/i18n.ts`
+- `docs-obsidian/05_Ideas.md`
+- `docs-obsidian/06_Changelog.md`
+
+**O que mudou**:
+A tela de Aparência foi reorganizada em 3 etapas: tipo de restaurante, cores e
+logo/banner. A prévia do perfil fica sempre visível ao lado e muda em tempo real
+conforme o usuário escolhe template, edita cores ou seleciona imagens.
+
+**Por que**:
+Personalização visual precisa ser guiada e visual. O usuário deve entender o impacto
+de cada escolha sem precisar salvar ou alternar entre telas.
+
+**Impacto**:
+- Fase 3 fica mais amigável para usuários não técnicos
+- Preview vivo ajuda a decidir cores, logo e banner com menos tentativa e erro
+- Mantém o padrão de fluxos guiados iniciado em Produtos
+
+---
+
 ### [2026-06-22] Fix UX — evitar salvamento automático no modal de produtos
 
 **Fase**: FASE 2 / UX transversal

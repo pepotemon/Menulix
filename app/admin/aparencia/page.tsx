@@ -1,8 +1,15 @@
 "use client";
 
 import Image from "next/image";
-import { FormEvent, useEffect, useState } from "react";
-import { ImagePlus, Palette, Smartphone } from "lucide-react";
+import { useEffect, useState } from "react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Check,
+  ImagePlus,
+  Palette,
+  Smartphone
+} from "lucide-react";
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { useAdminData } from "@/components/admin/admin-data-provider";
 import { useI18n } from "@/components/language-provider";
@@ -101,6 +108,7 @@ export default function AdminAppearancePage(): JSX.Element {
   const [isSaving, setIsSaving] = useState(false);
   const [logoPreviewUrl, setLogoPreviewUrl] = useState("");
   const [bannerPreviewUrl, setBannerPreviewUrl] = useState("");
+  const [formStep, setFormStep] = useState(0);
 
   useEffect(() => {
     if (!restaurant) return;
@@ -166,8 +174,7 @@ export default function AdminAppearancePage(): JSX.Element {
     );
   }
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>): Promise<void> {
-    event.preventDefault();
+  async function handleSave(): Promise<void> {
     if (!restaurant || !form) return;
 
     setIsSaving(true);
@@ -190,6 +197,7 @@ export default function AdminAppearancePage(): JSX.Element {
         logoUrl,
         bannerUrl
       });
+
       setForm((current) =>
         current
           ? {
@@ -221,6 +229,11 @@ export default function AdminAppearancePage(): JSX.Element {
 
   const previewLogoUrl = logoPreviewUrl || form.logoUrl;
   const previewBannerUrl = bannerPreviewUrl || form.bannerUrl;
+  const steps = [
+    t("admin.appearance.stepTemplate"),
+    t("admin.appearance.stepColors"),
+    t("admin.appearance.stepImages")
+  ];
 
   return (
     <>
@@ -229,147 +242,217 @@ export default function AdminAppearancePage(): JSX.Element {
         description={t("admin.appearance.description")}
       />
 
-      <form
-        onSubmit={handleSubmit}
-        className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_360px]"
-      >
-        <section className="space-y-5">
-          <div className="rounded-md border border-line bg-white p-5 shadow-soft">
-            <h2 className="text-lg font-black text-ink">
-              {t("admin.appearance.template")}
+      <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_380px]">
+        <section className="rounded-md border border-line bg-white shadow-soft">
+          <div className="border-b border-line px-5 py-4">
+            <p className="text-xs font-black uppercase text-leaf">
+              {t("admin.appearance.stepLabel")} {formStep + 1}/3
+            </p>
+            <h2 className="mt-1 text-lg font-black text-ink">
+              {steps[formStep]}
             </h2>
-            <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {templatePresets.map((preset) => (
-                <button
-                  key={preset.id}
-                  type="button"
-                  onClick={() => handleTemplateChange(preset.id)}
-                  className={`rounded-md border p-3 text-left transition ${
-                    form.template === preset.id
-                      ? "border-leaf bg-cream"
-                      : "border-line bg-white hover:border-leaf"
-                  }`}
-                >
-                  <span className="block text-sm font-black text-ink">
-                    {t(getTemplateLabelKey(preset.id))}
-                  </span>
-                  <span className="mt-3 flex gap-2">
-                    {Object.values(preset.theme).map((color) => (
-                      <span
-                        key={color}
-                        className="h-6 w-6 rounded-full border border-line"
-                        style={{ backgroundColor: color }}
-                      />
-                    ))}
-                  </span>
-                </button>
-              ))}
-            </div>
           </div>
 
-          <div className="rounded-md border border-line bg-white p-5 shadow-soft">
-            <h2 className="text-lg font-black text-ink">
-              {t("admin.appearance.colors")}
-            </h2>
-            <div className="mt-4 grid gap-4 sm:grid-cols-2">
-              {[
-                ["primaryColor", t("admin.appearance.primaryColor")],
-                ["secondaryColor", t("admin.appearance.secondaryColor")],
-                ["backgroundColor", t("admin.appearance.backgroundColor")],
-                ["textColor", t("admin.appearance.textColor")]
-              ].map(([key, label]) => (
-                <label key={key} className="block">
-                  <span className="text-sm font-bold text-ink">{label}</span>
-                  <span className="mt-2 flex min-h-12 items-center gap-3 rounded-md border border-line bg-cream px-3">
-                    <input
-                      type="color"
-                      value={form.theme[key as keyof RestaurantTheme]}
-                      onChange={(event) =>
-                        updateTheme(
-                          key as keyof RestaurantTheme,
-                          event.target.value
-                        )
-                      }
-                      className="h-8 w-10 rounded border border-line bg-white"
-                    />
-                    <input
-                      value={form.theme[key as keyof RestaurantTheme]}
-                      onChange={(event) =>
-                        updateTheme(
-                          key as keyof RestaurantTheme,
-                          event.target.value
-                        )
-                      }
-                      className="w-full bg-transparent text-sm font-semibold text-ink outline-none"
-                    />
-                  </span>
-                </label>
-              ))}
-            </div>
-          </div>
-
-          <div className="grid gap-5 lg:grid-cols-2">
-            {[
-              {
-                kind: "logo" as const,
-                title: t("admin.appearance.logo"),
-                urlLabel: t("admin.appearance.logoUrl"),
-                value: form.logoUrl,
-                file: logoFile,
-                setFile: setLogoFile
-              },
-              {
-                kind: "banner" as const,
-                title: t("admin.appearance.banner"),
-                urlLabel: t("admin.appearance.bannerUrl"),
-                value: form.bannerUrl,
-                file: bannerFile,
-                setFile: setBannerFile
-              }
-            ].map((item) => (
-              <section
-                key={item.kind}
-                className="rounded-md border border-line bg-white p-5 shadow-soft"
+          <div className="grid grid-cols-3 border-b border-line">
+            {steps.map((label, index) => (
+              <button
+                key={label}
+                type="button"
+                onClick={() => setFormStep(index)}
+                className={`min-h-12 border-r border-line px-2 text-xs font-black transition last:border-r-0 ${
+                  index === formStep
+                    ? "bg-leaf text-white"
+                    : "bg-cream text-ink/60 hover:text-ink"
+                }`}
               >
-                <h2 className="text-lg font-black text-ink">{item.title}</h2>
-                <p className="mt-1 text-sm font-semibold text-ink/50">
-                  {t("admin.appearance.uploadHelp")}
-                </p>
-                <label className="mt-4 flex min-h-12 items-center gap-2 rounded-md border border-line bg-cream px-3 text-sm font-semibold text-ink">
-                  <ImagePlus size={18} className="text-ink/50" />
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(event) =>
-                      item.setFile(event.target.files?.[0] ?? null)
-                    }
-                    className="w-full text-sm"
-                  />
-                </label>
-                <label className="mt-4 block">
-                  <span className="text-sm font-bold text-ink">{item.urlLabel}</span>
-                  <input
-                    value={item.value}
-                    onChange={(event) =>
-                      setForm((current) =>
-                        current
-                          ? {
-                              ...current,
-                              [`${item.kind}Url`]: event.target.value
-                            }
-                          : current
-                      )
-                    }
-                    className="mt-2 min-h-12 w-full rounded-md border border-line bg-cream px-3 text-sm font-semibold text-ink outline-none focus:border-leaf"
-                  />
-                </label>
-                {item.file ? (
-                  <p className="mt-2 text-xs font-bold text-leaf">
-                    {item.file.name}
-                  </p>
-                ) : null}
-              </section>
+                {label}
+              </button>
             ))}
+          </div>
+
+          <div className="p-5">
+            {formStep === 0 ? (
+              <div>
+                <p className="text-sm font-semibold leading-6 text-ink/60">
+                  {t("admin.appearance.templateHelp")}
+                </p>
+                <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                  {templatePresets.map((preset) => (
+                    <button
+                      key={preset.id}
+                      type="button"
+                      onClick={() => handleTemplateChange(preset.id)}
+                      className={`rounded-md border p-3 text-left transition ${
+                        form.template === preset.id
+                          ? "border-leaf bg-cream"
+                          : "border-line bg-white hover:border-leaf"
+                      }`}
+                    >
+                      <span className="flex items-center justify-between gap-2 text-sm font-black text-ink">
+                        {t(getTemplateLabelKey(preset.id))}
+                        {form.template === preset.id ? (
+                          <Check aria-hidden="true" className="h-4 w-4 text-leaf" />
+                        ) : null}
+                      </span>
+                      <span className="mt-3 flex gap-2">
+                        {Object.values(preset.theme).map((color) => (
+                          <span
+                            key={color}
+                            className="h-6 w-6 rounded-full border border-line"
+                            style={{ backgroundColor: color }}
+                          />
+                        ))}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+
+            {formStep === 1 ? (
+              <div>
+                <p className="text-sm font-semibold leading-6 text-ink/60">
+                  {t("admin.appearance.colorsHelp")}
+                </p>
+                <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                  {[
+                    ["primaryColor", t("admin.appearance.primaryColor")],
+                    ["secondaryColor", t("admin.appearance.secondaryColor")],
+                    ["backgroundColor", t("admin.appearance.backgroundColor")],
+                    ["textColor", t("admin.appearance.textColor")]
+                  ].map(([key, label]) => (
+                    <label key={key} className="block">
+                      <span className="text-sm font-bold text-ink">{label}</span>
+                      <span className="mt-2 flex min-h-12 items-center gap-3 rounded-md border border-line bg-cream px-3">
+                        <input
+                          type="color"
+                          value={form.theme[key as keyof RestaurantTheme]}
+                          onChange={(event) =>
+                            updateTheme(
+                              key as keyof RestaurantTheme,
+                              event.target.value
+                            )
+                          }
+                          className="h-8 w-10 rounded border border-line bg-white"
+                        />
+                        <input
+                          value={form.theme[key as keyof RestaurantTheme]}
+                          onChange={(event) =>
+                            updateTheme(
+                              key as keyof RestaurantTheme,
+                              event.target.value
+                            )
+                          }
+                          className="w-full bg-transparent text-sm font-semibold text-ink outline-none"
+                        />
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+
+            {formStep === 2 ? (
+              <div>
+                <p className="text-sm font-semibold leading-6 text-ink/60">
+                  {t("admin.appearance.imagesHelp")}
+                </p>
+                <div className="mt-4 grid gap-5 lg:grid-cols-2">
+                  {[
+                    {
+                      kind: "logo" as const,
+                      title: t("admin.appearance.logo"),
+                      urlLabel: t("admin.appearance.logoUrl"),
+                      value: form.logoUrl,
+                      file: logoFile,
+                      setFile: setLogoFile
+                    },
+                    {
+                      kind: "banner" as const,
+                      title: t("admin.appearance.banner"),
+                      urlLabel: t("admin.appearance.bannerUrl"),
+                      value: form.bannerUrl,
+                      file: bannerFile,
+                      setFile: setBannerFile
+                    }
+                  ].map((item) => (
+                    <section
+                      key={item.kind}
+                      className="rounded-md border border-line bg-cream p-4"
+                    >
+                      <h3 className="text-base font-black text-ink">{item.title}</h3>
+                      <label className="mt-4 flex min-h-12 items-center gap-2 rounded-md border border-line bg-white px-3 text-sm font-semibold text-ink">
+                        <ImagePlus size={18} className="text-ink/50" />
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(event) =>
+                            item.setFile(event.target.files?.[0] ?? null)
+                          }
+                          className="w-full text-sm"
+                        />
+                      </label>
+                      <label className="mt-4 block">
+                        <span className="text-sm font-bold text-ink">
+                          {item.urlLabel}
+                        </span>
+                        <input
+                          value={item.value}
+                          onChange={(event) =>
+                            setForm((current) =>
+                              current
+                                ? {
+                                    ...current,
+                                    [`${item.kind}Url`]: event.target.value
+                                  }
+                                : current
+                            )
+                          }
+                          className="mt-2 min-h-12 w-full rounded-md border border-line bg-white px-3 text-sm font-semibold text-ink outline-none focus:border-leaf"
+                        />
+                      </label>
+                      {item.file ? (
+                        <p className="mt-2 text-xs font-bold text-leaf">
+                          {t("admin.appearance.imageSelected")}: {item.file.name}
+                        </p>
+                      ) : null}
+                    </section>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+          </div>
+
+          <div className="flex flex-col-reverse gap-2 border-t border-line px-5 py-4 sm:flex-row sm:justify-between">
+            <button
+              type="button"
+              onClick={() => setFormStep((step) => Math.max(step - 1, 0))}
+              disabled={formStep === 0}
+              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-line bg-white px-4 py-2 text-sm font-black text-ink transition hover:border-leaf disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <ArrowLeft aria-hidden="true" size={17} />
+              {t("admin.common.back")}
+            </button>
+
+            {formStep < 2 ? (
+              <button
+                type="button"
+                onClick={() => setFormStep((step) => Math.min(step + 1, 2))}
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-leaf px-4 py-2 text-sm font-black text-white transition hover:bg-ink"
+              >
+                {t("admin.common.next")}
+                <ArrowRight aria-hidden="true" size={17} />
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => void handleSave()}
+                disabled={isSaving}
+                className="inline-flex min-h-11 items-center justify-center rounded-md bg-leaf px-4 py-2 text-sm font-black text-white transition hover:bg-ink disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {isSaving ? t("admin.common.saving") : t("admin.appearance.save")}
+              </button>
+            )}
           </div>
         </section>
 
@@ -396,7 +479,7 @@ export default function AdminAppearancePage(): JSX.Element {
                   alt=""
                   src={previewBannerUrl}
                   fill
-                  sizes="360px"
+                  sizes="380px"
                   className="object-cover"
                   unoptimized
                 />
@@ -432,13 +515,26 @@ export default function AdminAppearancePage(): JSX.Element {
               <p className="mt-2 line-clamp-3 text-sm leading-6 opacity-75">
                 {restaurant.description}
               </p>
-              <button
-                type="button"
-                className="mt-4 min-h-11 w-full rounded-md px-4 py-2 text-sm font-black text-white"
-                style={{ backgroundColor: form.theme.primaryColor }}
-              >
-                {t("public.whatsapp")}
-              </button>
+              <div className="mt-4 grid gap-2">
+                <button
+                  type="button"
+                  className="min-h-11 w-full rounded-md px-4 py-2 text-sm font-black text-white"
+                  style={{ backgroundColor: form.theme.primaryColor }}
+                >
+                  {t("public.whatsapp")}
+                </button>
+                <div className="grid grid-cols-3 gap-2">
+                  <span
+                    className="h-2 rounded-full"
+                    style={{ backgroundColor: form.theme.primaryColor }}
+                  />
+                  <span
+                    className="h-2 rounded-full"
+                    style={{ backgroundColor: form.theme.secondaryColor }}
+                  />
+                  <span className="h-2 rounded-full bg-white/70" />
+                </div>
+              </div>
             </div>
           </div>
 
@@ -447,16 +543,8 @@ export default function AdminAppearancePage(): JSX.Element {
               {statusMessage}
             </p>
           ) : null}
-
-          <button
-            type="submit"
-            disabled={isSaving}
-            className="mt-5 min-h-12 w-full rounded-md bg-leaf px-4 py-3 text-sm font-black text-white transition hover:bg-ink disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {isSaving ? t("admin.common.saving") : t("admin.appearance.save")}
-          </button>
         </aside>
-      </form>
+      </div>
     </>
   );
 }

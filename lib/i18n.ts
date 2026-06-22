@@ -145,6 +145,17 @@ export const dictionary = {
     "admin.appearance.saveError": "Não foi possível salvar a aparência.",
     "admin.appearance.save": "Salvar aparência",
     "admin.appearance.uploadHelp": "Envie uma imagem ou cole um link.",
+    "admin.appearance.stepLabel": "Etapa",
+    "admin.appearance.stepTemplate": "Tipo de restaurante",
+    "admin.appearance.stepColors": "Cores",
+    "admin.appearance.stepImages": "Logo e banner",
+    "admin.appearance.templateHelp":
+      "Comece por um estilo pronto. Ele já ajusta as cores para combinar com o tipo do restaurante.",
+    "admin.appearance.colorsHelp":
+      "Ajuste as cores e veja a prévia mudar em tempo real.",
+    "admin.appearance.imagesHelp":
+      "Envie logo e banner. A prévia muda assim que você escolhe os arquivos.",
+    "admin.appearance.imageSelected": "Imagem selecionada",
     "admin.appearance.template.pizzaria": "Pizzaria",
     "admin.appearance.template.hamburgueria": "Hamburgueria",
     "admin.appearance.template.acai": "Açaí",
@@ -367,6 +378,17 @@ export const dictionary = {
     "admin.appearance.saveError": "No fue posible guardar la apariencia.",
     "admin.appearance.save": "Guardar apariencia",
     "admin.appearance.uploadHelp": "Envía una imagen o pega un link.",
+    "admin.appearance.stepLabel": "Paso",
+    "admin.appearance.stepTemplate": "Tipo de restaurante",
+    "admin.appearance.stepColors": "Colores",
+    "admin.appearance.stepImages": "Logo y banner",
+    "admin.appearance.templateHelp":
+      "Empieza por un estilo listo. Ya ajusta los colores para combinar con el tipo de restaurante.",
+    "admin.appearance.colorsHelp":
+      "Ajusta los colores y mira la vista previa cambiar en tiempo real.",
+    "admin.appearance.imagesHelp":
+      "Envía logo y banner. La vista previa cambia apenas eliges los archivos.",
+    "admin.appearance.imageSelected": "Imagen seleccionada",
     "admin.appearance.template.pizzaria": "Pizzería",
     "admin.appearance.template.hamburgueria": "Hamburguesería",
     "admin.appearance.template.acai": "Açaí",
