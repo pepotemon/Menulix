@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ArrowLeft,
   ArrowRight,
@@ -109,8 +109,7 @@ export default function AdminProductsPage(): JSX.Element {
     setFormStep(0);
   }
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>): Promise<void> {
-    event.preventDefault();
+  async function handleSave(): Promise<void> {
     if (!restaurant) return;
 
     setIsSaving(true);
@@ -318,7 +317,7 @@ export default function AdminProductsPage(): JSX.Element {
       {isFormOpen ? (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-ink/40 px-3 py-4 backdrop-blur-sm sm:items-center">
           <form
-            onSubmit={handleSubmit}
+            onSubmit={(event) => event.preventDefault()}
             className="max-h-[92vh] w-full max-w-2xl overflow-hidden rounded-md border border-line bg-white shadow-soft"
           >
             <div className="flex items-start justify-between gap-4 border-b border-line px-5 py-4">
@@ -568,7 +567,8 @@ export default function AdminProductsPage(): JSX.Element {
                 </button>
               ) : (
                 <button
-                  type="submit"
+                  type="button"
+                  onClick={() => void handleSave()}
                   disabled={isSaving || categories.length === 0}
                   className="inline-flex min-h-11 items-center justify-center rounded-md bg-leaf px-4 py-2 text-sm font-black text-white transition hover:bg-ink disabled:cursor-not-allowed disabled:opacity-60"
                 >

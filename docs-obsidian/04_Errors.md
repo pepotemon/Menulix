@@ -22,6 +22,17 @@
 
 ## Erros Registrados
 
+### [ERR-004] Modal de produtos salvava ao chegar na última etapa
+
+**Data**: 2026-06-22
+**Arquivo**: `app/admin/produtos/page.tsx`
+**Sintoma**: Ao avançar até a última etapa do formulário guiado de produtos, o produto era salvo automaticamente e o usuário não conseguia preencher foto, disponibilidade ou destaque.
+**Causa raiz**: O modal usava um `<form>` com botão final `type="submit"`. Na troca de etapa, o controle de avanço e o botão de submit ocupavam o mesmo fluxo visual, permitindo envio involuntário em alguns cenários de clique/toque.
+**Solução**: Remover o submit automático do formulário e trocar o salvamento para uma ação explícita (`handleSave`) chamada apenas pelo botão "Salvar" no último passo.
+**Prevenção**: Em formulários por etapas, botões de navegação e salvamento devem ser sempre `type="button"`; o formulário pode apenas prevenir submit padrão.
+
+---
+
 ### [ERR-003] Preview de aparência não atualizava logo e banner selecionados
 
 **Data**: 2026-06-19

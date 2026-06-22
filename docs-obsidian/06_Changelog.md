@@ -31,6 +31,31 @@ O que isso afeta.
 
 ---
 
+### [2026-06-22] Fix UX — evitar salvamento automático no modal de produtos
+
+**Fase**: FASE 2 / UX transversal
+**Tipo**: fix
+**Arquivos modificados**:
+- `app/admin/produtos/page.tsx`
+- `docs-obsidian/04_Errors.md`
+- `docs-obsidian/06_Changelog.md`
+
+**O que mudou**:
+O modal de produtos deixou de usar submit automático do formulário. Agora o avanço
+até o passo 3 apenas muda de etapa, e o produto só é criado ou atualizado quando
+o usuário toca explicitamente em "Salvar".
+
+**Por que**:
+Ao chegar no último passo, o formulário podia salvar antes que o usuário escolhesse
+foto, disponibilidade ou destaque.
+
+**Impacto**:
+- Fluxo de cadastro por etapas fica previsível
+- O passo de foto/visibilidade pode ser preenchido antes de salvar
+- Menos risco de produtos incompletos criados por engano
+
+---
+
 ### [2026-06-22] UX admin — formulário guiado de produtos
 
 **Fase**: FASE 2 / UX transversal
