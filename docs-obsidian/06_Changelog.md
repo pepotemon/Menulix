@@ -31,6 +31,33 @@ O que isso afeta.
 
 ---
 
+### [2026-06-22] UX admin — formulário guiado de produtos
+
+**Fase**: FASE 2 / UX transversal
+**Tipo**: feat
+**Arquivos modificados**:
+- `app/admin/produtos/page.tsx`
+- `lib/i18n.ts`
+- `docs-obsidian/05_Ideas.md`
+- `docs-obsidian/06_Changelog.md`
+
+**O que mudou**:
+A tela de produtos deixou de mostrar o formulário de criação sempre aberto. Agora
+há um botão "Novo produto" que abre um modal guiado em 3 etapas: nome/descrição,
+preço/categoria/ordem e foto/visibilidade. A edição de produto usa o mesmo modal.
+
+**Por que**:
+O painel precisa ser mais amigável para donos de restaurante pouco acostumados com
+sistemas administrativos. Um fluxo guiado reduz ruído visual e deixa a tarefa de
+cadastrar produto mais clara.
+
+**Impacto**:
+- Página de produtos fica mais limpa
+- Cadastro e edição ficam mais direcionados
+- Base visual pronta para repetir o padrão em categorias e outras telas
+
+---
+
 ### [2026-06-19] Fix UX — polimento da aparência
 
 **Fase**: FASE 3

@@ -80,6 +80,9 @@ Forma de pagamento:
 
 ## Ideias Futuras (Não Planejadas)
 
+### 🚧 Formulários guiados em modais no painel admin
+Melhorar telas de criação/edição para usuários não técnicos, evitando formulários longos sempre visíveis. Primeiro corte implementado em Produtos com modal por etapas; avaliar extensão para Categorias, Informações e Aparência.
+
 ### 💡 Cardápio em múltiplos idiomas
 Permitir que o restaurante cadastre nome/descrição em PT + EN + ES.
 
