@@ -31,6 +31,43 @@ O que isso afeta.
 
 ---
 
+### [2026-06-23] UI transversal - sistema visual aplicado ao produto
+
+**Fase**: FASE 2 / FASE 3 / FASE 5
+**Tipo**: feat
+**Arquivos criados/modificados**:
+- `components/ui/`
+- `components/public-menu/category-nav.tsx`
+- `app/admin/produtos/page.tsx`
+- `app/admin/categorias/page.tsx`
+- `app/admin/aparencia/page.tsx`
+- `app/admin/restaurante/page.tsx`
+- `app/admin/page.tsx`
+- `components/public-menu/public-menu-page.tsx`
+- `components/public-menu/product-card.tsx`
+- `components/public-menu/cart-drawer.tsx`
+- `app/globals.css`
+- `lib/i18n.ts`
+
+**O que mudou**:
+O guia visual foi transformado em componentes e fluxos reais. O painel ganhou
+primitivas reutilizáveis, categorias em modal, informações em três etapas,
+uploads com preview e remoção, feedback consistente e modais acessíveis. O menu
+público agora destaca a categoria visível, mostra placeholder sem foto e fecha
+o carrinho também por Escape.
+
+**Por que**:
+Usuários pouco habituados a sistemas administrativos precisam ver uma tarefa por
+vez, receber feedback imediato e encontrar controles previsíveis em todas as telas.
+
+**Impacto**:
+- Menos formulários longos e menos ruído visual no painel
+- Comportamento consistente de loading, foco, erro e fechamento
+- Melhor navegação e tolerância a dados incompletos no cardápio público
+- Nenhuma dependência nova e nenhuma alteração no modelo Firebase
+
+---
+
 ### [2026-06-23] Documentação - guia de UI, componentes e estilo
 
 **Fase**: Transversal

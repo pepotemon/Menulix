@@ -1,10 +1,13 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
-import { Eye, EyeOff, Pencil, Trash2 } from "lucide-react";
+import { Eye, EyeOff, Pencil, Plus, Trash2 } from "lucide-react";
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { useAdminData } from "@/components/admin/admin-data-provider";
 import { useI18n } from "@/components/language-provider";
+import { Button } from "@/components/ui/button";
+import { Feedback } from "@/components/ui/feedback";
+import { Modal } from "@/components/ui/modal";
 import {
   createCategory,
   deleteCategory,
@@ -27,6 +30,7 @@ export default function AdminCategoriesPage(): JSX.Element {
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [statusMessage, setStatusMessage] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+  const [isFormOpen, setIsFormOpen] = useState(false);
 
   useEffect(() => {
     if (!editingCategory) {
@@ -45,6 +49,24 @@ export default function AdminCategoriesPage(): JSX.Element {
     });
     setOrderInput(String(editingCategory.order));
   }, [categories.length, editingCategory]);
+
+  function openCreateForm(): void {
+    setEditingCategory(null);
+    setForm({ ...emptyForm, order: categories.length + 1 });
+    setOrderInput("");
+    setStatusMessage("");
+    setIsFormOpen(true);
+  }
+
+  function openEditForm(category: Category): void {
+    setEditingCategory(category);
+    setIsFormOpen(true);
+  }
+
+  function closeForm(): void {
+    setIsFormOpen(false);
+    setEditingCategory(null);
+  }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault();
@@ -71,7 +93,7 @@ export default function AdminCategoriesPage(): JSX.Element {
         setStatusMessage(t("admin.categories.created"));
       }
 
-      setEditingCategory(null);
+      closeForm();
       await refresh();
     } catch {
       setStatusMessage(t("admin.categories.saveError"));
@@ -115,92 +137,27 @@ export default function AdminCategoriesPage(): JSX.Element {
         description={t("admin.categories.description")}
       />
 
-      <div className="grid gap-5 lg:grid-cols-[minmax(0,380px)_1fr]">
-        <form
-          onSubmit={handleSubmit}
-          className="rounded-md border border-line bg-white p-5 shadow-soft"
-        >
-          <h2 className="text-lg font-black text-ink">
-            {editingCategory
-              ? t("admin.categories.edit")
-              : t("admin.categories.new")}
-          </h2>
+      {statusMessage && statusMessage !== t("admin.categories.saveError") ? (
+        <Feedback
+          className="mb-5"
+          message={statusMessage}
+          tone={
+            statusMessage === t("admin.categories.saveError") ? "error" : "success"
+          }
+        />
+      ) : null}
 
-          <label className="mt-4 block">
-            <span className="text-sm font-bold text-ink">
-              {t("admin.categories.name")}
-            </span>
-            <input
-              value={form.name}
-              onChange={(event) =>
-                setForm((current) => ({ ...current, name: event.target.value }))
-              }
-              required
-              className="mt-2 min-h-12 w-full rounded-md border border-line bg-cream px-3 text-sm font-semibold text-ink outline-none focus:border-leaf"
-            />
-          </label>
-
-          <label className="mt-4 block">
-            <span className="text-sm font-bold text-ink">
-              {t("admin.common.order")}
-            </span>
-            <input
-              type="number"
-              min={1}
-              value={orderInput}
-              onChange={(event) => setOrderInput(event.target.value)}
-              placeholder={String(categories.length + 1)}
-              className="mt-2 min-h-12 w-full rounded-md border border-line bg-cream px-3 text-sm font-semibold text-ink outline-none focus:border-leaf"
-            />
-          </label>
-
-          <label className="mt-4 flex items-center justify-between gap-4 rounded-md border border-line bg-cream px-4 py-3">
-            <span className="text-sm font-black text-ink">
-              {t("admin.categories.visible")}
-            </span>
-            <input
-              type="checkbox"
-              checked={form.isActive}
-              onChange={(event) =>
-                setForm((current) => ({
-                  ...current,
-                  isActive: event.target.checked
-                }))
-              }
-              className="h-5 w-5 accent-leaf"
-            />
-          </label>
-
-          {statusMessage ? (
-            <p className="mt-4 rounded-md border border-line bg-cream px-3 py-2 text-sm font-bold text-ink/68">
-              {statusMessage}
-            </p>
-          ) : null}
-
-          <div className="mt-5 flex gap-2">
-            <button
-              type="submit"
-              disabled={isSaving}
-              className="min-h-12 flex-1 rounded-md bg-leaf px-4 py-3 text-sm font-black text-white transition hover:bg-ink disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {isSaving ? t("admin.common.saving") : t("admin.common.save")}
-            </button>
-            {editingCategory ? (
-              <button
-                type="button"
-                onClick={() => setEditingCategory(null)}
-                className="min-h-12 rounded-md border border-line bg-white px-4 py-3 text-sm font-black text-ink transition hover:border-leaf"
-              >
-                {t("admin.common.cancel")}
-              </button>
-            ) : null}
-          </div>
-        </form>
-
+      <div>
         <section className="rounded-md border border-line bg-white p-5 shadow-soft">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="text-lg font-black text-ink">
             {t("admin.categories.list")}
           </h2>
+            <Button type="button" onClick={openCreateForm}>
+              <Plus aria-hidden="true" size={18} />
+              {t("admin.categories.new")}
+            </Button>
+          </div>
 
           <div className="mt-4 grid gap-3">
             {categories.length === 0 ? (
@@ -227,7 +184,7 @@ export default function AdminCategoriesPage(): JSX.Element {
                 <div className="flex flex-wrap gap-2">
                   <button
                     type="button"
-                    onClick={() => setEditingCategory(category)}
+                    onClick={() => openEditForm(category)}
                     className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-line bg-white text-ink transition hover:border-leaf hover:text-leaf"
                     aria-label={t("admin.common.edit")}
                     title={t("admin.common.edit")}
@@ -262,6 +219,90 @@ export default function AdminCategoriesPage(): JSX.Element {
           </div>
         </section>
       </div>
+
+      <Modal
+        isOpen={isFormOpen}
+        title={
+          editingCategory
+            ? t("admin.categories.edit")
+            : t("admin.categories.new")
+        }
+        closeLabel={t("admin.common.close")}
+        onClose={closeForm}
+        maxWidthClassName="max-w-lg"
+        footer={
+          <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+            <Button type="button" variant="secondary" onClick={closeForm}>
+              {t("admin.common.cancel")}
+            </Button>
+            <Button
+              type="submit"
+              form="category-form"
+              isLoading={isSaving}
+            >
+              {isSaving ? t("admin.common.saving") : t("admin.common.save")}
+            </Button>
+          </div>
+        }
+      >
+        <form
+          id="category-form"
+          onSubmit={handleSubmit}
+          className="max-h-[64vh] space-y-4 overflow-y-auto px-5 py-5"
+        >
+          {statusMessage === t("admin.categories.saveError") ? (
+            <Feedback message={statusMessage} tone="error" />
+          ) : null}
+          <label className="block">
+            <span className="text-sm font-bold text-ink">
+              {t("admin.categories.name")}
+            </span>
+            <input
+              value={form.name}
+              onChange={(event) =>
+                setForm((current) => ({ ...current, name: event.target.value }))
+              }
+              required
+              autoFocus
+              className="mt-2 min-h-12 w-full rounded-md border border-line bg-cream px-3 text-sm font-semibold text-ink outline-none focus:border-leaf"
+            />
+          </label>
+
+          <label className="block">
+            <span className="text-sm font-bold text-ink">
+              {t("admin.common.order")}
+            </span>
+            <input
+              type="number"
+              min={1}
+              value={orderInput}
+              onChange={(event) => setOrderInput(event.target.value)}
+              placeholder={String(categories.length + 1)}
+              className="mt-2 min-h-12 w-full rounded-md border border-line bg-cream px-3 text-sm font-semibold text-ink outline-none focus:border-leaf"
+            />
+            <span className="mt-2 block text-xs font-semibold text-ink/50">
+              {t("admin.categories.orderHelp")}
+            </span>
+          </label>
+
+          <label className="flex items-center justify-between gap-4 rounded-md border border-line bg-cream px-4 py-3">
+            <span className="text-sm font-black text-ink">
+              {t("admin.categories.visible")}
+            </span>
+            <input
+              type="checkbox"
+              checked={form.isActive}
+              onChange={(event) =>
+                setForm((current) => ({
+                  ...current,
+                  isActive: event.target.checked
+                }))
+              }
+              className="h-5 w-5 accent-leaf"
+            />
+          </label>
+        </form>
+      </Modal>
     </>
   );
 }

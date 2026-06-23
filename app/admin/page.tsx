@@ -14,6 +14,7 @@ import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { PublicLinkPanel } from "@/components/admin/public-link-panel";
 import { useAdminData } from "@/components/admin/admin-data-provider";
 import { useI18n } from "@/components/language-provider";
+import { Panel } from "@/components/ui/panel";
 
 export default function AdminDashboardPage(): JSX.Element {
   const { restaurant, categories, products, isLoading, errorMessage } =
@@ -91,19 +92,19 @@ export default function AdminDashboardPage(): JSX.Element {
       </div>
 
       <div className="mt-6 grid gap-4 md:grid-cols-3">
-        <section className="rounded-md border border-line bg-white p-5 shadow-soft">
+        <Panel>
           <p className="text-sm font-bold text-ink/50">
             {t("admin.dashboard.products")}
           </p>
           <p className="mt-2 text-3xl font-black text-ink">{products.length}</p>
-        </section>
-        <section className="rounded-md border border-line bg-white p-5 shadow-soft">
+        </Panel>
+        <Panel>
           <p className="text-sm font-bold text-ink/50">
             {t("admin.dashboard.categories")}
           </p>
           <p className="mt-2 text-3xl font-black text-ink">{categories.length}</p>
-        </section>
-        <section className="rounded-md border border-line bg-white p-5 shadow-soft">
+        </Panel>
+        <Panel>
           <p className="text-sm font-bold text-ink/50">
             {t("admin.dashboard.published")}
           </p>
@@ -113,7 +114,7 @@ export default function AdminDashboardPage(): JSX.Element {
               ? t("admin.dashboard.yes")
               : t("admin.dashboard.no")}
           </p>
-        </section>
+        </Panel>
       </div>
 
       <div className="mt-6">

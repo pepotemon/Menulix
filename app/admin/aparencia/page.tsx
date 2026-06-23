@@ -6,13 +6,15 @@ import {
   ArrowLeft,
   ArrowRight,
   Check,
-  ImagePlus,
   Palette,
   Smartphone
 } from "lucide-react";
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { useAdminData } from "@/components/admin/admin-data-provider";
 import { useI18n } from "@/components/language-provider";
+import { Button } from "@/components/ui/button";
+import { Feedback } from "@/components/ui/feedback";
+import { ImageUpload } from "@/components/ui/image-upload";
 import {
   saveAppearance,
   uploadRestaurantAsset
@@ -376,23 +378,35 @@ export default function AdminAppearancePage(): JSX.Element {
                       setFile: setBannerFile
                     }
                   ].map((item) => (
-                    <section
+                    <div
                       key={item.kind}
-                      className="rounded-md border border-line bg-cream p-4"
+                      className="space-y-4"
                     >
-                      <h3 className="text-base font-black text-ink">{item.title}</h3>
-                      <label className="mt-4 flex min-h-12 items-center gap-2 rounded-md border border-line bg-white px-3 text-sm font-semibold text-ink">
-                        <ImagePlus size={18} className="text-ink/50" />
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={(event) =>
-                            item.setFile(event.target.files?.[0] ?? null)
-                          }
-                          className="w-full text-sm"
-                        />
-                      </label>
-                      <label className="mt-4 block">
+                      <ImageUpload
+                        label={item.title}
+                        chooseLabel={t("admin.image.choose")}
+                        removeLabel={t("admin.image.remove")}
+                        emptyLabel={
+                          item.kind === "logo"
+                            ? t("admin.image.emptyLogo")
+                            : t("admin.image.emptyBanner")
+                        }
+                        file={item.file}
+                        currentUrl={item.value}
+                        aspect={item.kind === "logo" ? "square" : "wide"}
+                        onFileChange={item.setFile}
+                        onRemove={() =>
+                          setForm((current) =>
+                            current
+                              ? {
+                                  ...current,
+                                  [`${item.kind}Url`]: ""
+                                }
+                              : current
+                          )
+                        }
+                      />
+                      <label className="block">
                         <span className="text-sm font-bold text-ink">
                           {item.urlLabel}
                         </span>
@@ -411,12 +425,7 @@ export default function AdminAppearancePage(): JSX.Element {
                           className="mt-2 min-h-12 w-full rounded-md border border-line bg-white px-3 text-sm font-semibold text-ink outline-none focus:border-leaf"
                         />
                       </label>
-                      {item.file ? (
-                        <p className="mt-2 text-xs font-bold text-leaf">
-                          {t("admin.appearance.imageSelected")}: {item.file.name}
-                        </p>
-                      ) : null}
-                    </section>
+                    </div>
                   ))}
                 </div>
               </div>
@@ -424,34 +433,32 @@ export default function AdminAppearancePage(): JSX.Element {
           </div>
 
           <div className="flex flex-col-reverse gap-2 border-t border-line px-5 py-4 sm:flex-row sm:justify-between">
-            <button
+            <Button
               type="button"
               onClick={() => setFormStep((step) => Math.max(step - 1, 0))}
               disabled={formStep === 0}
-              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-line bg-white px-4 py-2 text-sm font-black text-ink transition hover:border-leaf disabled:cursor-not-allowed disabled:opacity-50"
+              variant="secondary"
             >
               <ArrowLeft aria-hidden="true" size={17} />
               {t("admin.common.back")}
-            </button>
+            </Button>
 
             {formStep < 2 ? (
-              <button
+              <Button
                 type="button"
                 onClick={() => setFormStep((step) => Math.min(step + 1, 2))}
-                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-leaf px-4 py-2 text-sm font-black text-white transition hover:bg-ink"
               >
                 {t("admin.common.next")}
                 <ArrowRight aria-hidden="true" size={17} />
-              </button>
+              </Button>
             ) : (
-              <button
+              <Button
                 type="button"
                 onClick={() => void handleSave()}
-                disabled={isSaving}
-                className="inline-flex min-h-11 items-center justify-center rounded-md bg-leaf px-4 py-2 text-sm font-black text-white transition hover:bg-ink disabled:cursor-not-allowed disabled:opacity-60"
+                isLoading={isSaving}
               >
                 {isSaving ? t("admin.common.saving") : t("admin.appearance.save")}
-              </button>
+              </Button>
             )}
           </div>
         </section>
@@ -539,9 +546,15 @@ export default function AdminAppearancePage(): JSX.Element {
           </div>
 
           {statusMessage ? (
-            <p className="mt-4 rounded-md border border-line bg-cream px-3 py-2 text-sm font-bold text-ink/68">
-              {statusMessage}
-            </p>
+            <Feedback
+              className="mt-4"
+              message={statusMessage}
+              tone={
+                statusMessage === t("admin.appearance.saveError")
+                  ? "error"
+                  : "success"
+              }
+            />
           ) : null}
         </aside>
       </div>

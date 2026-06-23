@@ -7,6 +7,7 @@ import { useI18n } from "@/components/language-provider";
 import { CartButton } from "@/components/public-menu/cart-button";
 import { CartDrawer } from "@/components/public-menu/cart-drawer";
 import { CartProvider } from "@/components/public-menu/cart-provider";
+import { CategoryNav } from "@/components/public-menu/category-nav";
 import { CategorySection } from "@/components/public-menu/category-section";
 import { OpeningHours } from "@/components/public-menu/opening-hours";
 import { RestaurantHeader } from "@/components/public-menu/restaurant-header";
@@ -43,31 +44,10 @@ export function PublicMenuPage({ menu }: PublicMenuPageProps) {
       >
         <RestaurantHeader restaurant={restaurant} />
 
-        <div className="sticky top-0 z-10 border-b border-line bg-[var(--restaurant-bg)] backdrop-blur">
-          <nav
-            aria-label={t("public.category.nav")}
-            className="mx-auto flex max-w-6xl gap-2 overflow-x-auto px-4 py-3 sm:px-6 lg:px-8"
-          >
-            {categories.map((category) => (
-              <a
-                key={category.id}
-                className="whitespace-nowrap rounded-full border border-line bg-white px-4 py-2 text-sm font-bold text-[var(--restaurant-text)] transition hover:border-[var(--restaurant-secondary)] hover:text-[var(--restaurant-secondary)]"
-                href={`#${category.id}`}
-                onClick={() => {
-                  void trackAnalyticsEvent({
-                    restaurantId: restaurant.id,
-                    type: "category_click",
-                    categoryId: category.id,
-                    categoryName: category.name,
-                    language
-                  });
-                }}
-              >
-                {category.name}
-              </a>
-            ))}
-          </nav>
-        </div>
+        <CategoryNav
+          categories={categories}
+          restaurantId={restaurant.id}
+        />
 
         <div className="mx-auto grid w-full max-w-6xl gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[1fr_320px] lg:px-8">
           <div className="space-y-8">

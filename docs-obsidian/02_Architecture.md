@@ -83,6 +83,20 @@ Menulix/
 
 ---
 
+## Componentes UI Compartilhados
+
+- `components/ui/button.tsx` - variantes, tamanhos e estado de loading
+- `components/ui/feedback.tsx` - mensagens de sucesso, erro e informação
+- `components/ui/image-upload.tsx` - seleção, preview e remoção de imagens
+- `components/ui/modal.tsx` - dialog com overlay, Escape e bloqueio de scroll
+- `components/ui/panel.tsx` - superfície padrão do painel
+- `components/public-menu/category-nav.tsx` - navegação sticky com categoria ativa
+
+Essas primitivas usam Tailwind, Lucide e os tokens existentes, sem dependência
+externa adicional.
+
+---
+
 ## TypeScript
 
 TypeScript está configurado com `strict: true`. Path aliases:

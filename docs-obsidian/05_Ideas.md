@@ -80,8 +80,10 @@ Forma de pagamento:
 
 ## Ideias Futuras (Não Planejadas)
 
-### 🚧 Formulários guiados no painel admin
-Melhorar telas de criação/edição para usuários não técnicos, evitando formulários longos sempre visíveis. Produtos já usa modal por etapas; Aparência agora usa fluxo por etapas com prévia em tempo real. Avaliar extensão para Categorias e Informações.
+### ✔️ Formulários guiados no painel admin
+Produtos usa modal em três etapas, Categorias abre criação/edição em modal,
+Aparência combina etapas com prévia ao vivo e Informações foi dividida em dados
+básicos, contato/local e horários. Todos salvam apenas por ação explícita.
 
 ### 💡 Cardápio em múltiplos idiomas
 Permitir que o restaurante cadastre nome/descrição em PT + EN + ES.

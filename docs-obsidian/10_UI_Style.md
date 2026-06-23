@@ -101,8 +101,8 @@ Estados:
 
 ## Componentes Base
 
-Ainda nao existe uma pasta generica `components/ui/`. Os estilos abaixo sao os
-padroes consolidados que novos componentes devem reutilizar.
+As primitivas reutilizaveis vivem em `components/ui/`: `Button`, `Panel`,
+`Feedback`, `Modal` e `ImageUpload`.
 
 ### Button
 
@@ -148,7 +148,7 @@ O formulario de produto e a referencia atual:
 - altura maxima 92vh e conteudo interno com scroll;
 - centrado no desktop e alinhado ao fundo no mobile;
 - cabecalho, progresso, conteudo e rodape separados por bordas;
-- fechar por botao `X`; clique externo e Escape ainda nao estao implementados;
+- fechar por botao `X`, clique externo ou tecla Escape;
 - fluxo de tres etapas e salvamento somente no botao final.
 
 ### Drawer
@@ -160,11 +160,10 @@ O carrinho publico usa um painel lateral:
 - overlay clicavel para fechar;
 - cabecalho e rodape fixos, lista central com scroll;
 - fecha por `X` ou clique no overlay;
-- Escape e animacao de entrada ainda nao estao implementados.
+- fecha por Escape e usa animacao curta de entrada.
 
 ### Feedback
 
-- Nao existe um componente global de Toast.
 - Confirmacoes e erros aparecem como blocos inline proximos da acao.
 - A confirmacao de link copiado dura 1,8 segundo e muda o label do botao.
 - Exclusoes usam `window.confirm`.
@@ -184,7 +183,8 @@ O carrinho publico usa um painel lateral:
 - Aparencia: logo e banner aceitam arquivo ou URL e atualizam a previa local.
 - Logo publico: quadrado, 80 px no mobile e 96 px no desktop.
 - Banner publico: largura total, `object-cover`, hero minimo de 360/430 px.
-- Drag and drop, remocao direta e crop ainda nao estao implementados.
+- A selecao pode ser removida diretamente sobre a imagem.
+- Drag and drop e crop ainda nao estao implementados.
 
 ---
 
@@ -226,7 +226,7 @@ ajustados manualmente antes de salvar.
 - Navegacao horizontal com scroll.
 - Categorias sao pills brancas com borda.
 - Hover usa a cor secundaria do restaurante.
-- O estado ativo durante scroll ainda nao e calculado.
+- A categoria ativa acompanha a secao visivel durante o scroll.
 
 ### CategorySection
 
@@ -306,11 +306,6 @@ outras funcoes secundarias nunca devem bloquear o fluxo publico.
 
 ## Pendencias de Sistema de UI
 
-- Extrair Button, Field, Modal e Feedback quando houver repeticao suficiente.
-- Adicionar fechamento de modal/drawer pela tecla Escape.
 - Definir toast global somente quando os feedbacks inline deixarem de ser suficientes.
-- Criar preview visual no upload de produtos.
-- Definir placeholder consistente para imagens ausentes.
-- Avaliar destaque da categoria ativa durante o scroll.
+- Avaliar extracao de Field quando os formatos de campo estiverem mais estaveis.
 - Avaliar ItemDetail apenas se houver conteudo adicional relevante.
-

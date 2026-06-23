@@ -6,17 +6,20 @@ import {
   ArrowRight,
   Eye,
   EyeOff,
+  ImageIcon,
   Pencil,
   Plus,
   Star,
-  Trash2,
-  Upload,
-  X
+  Trash2
 } from "lucide-react";
 import Image from "next/image";
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { useAdminData } from "@/components/admin/admin-data-provider";
 import { useI18n } from "@/components/language-provider";
+import { Button } from "@/components/ui/button";
+import { Feedback } from "@/components/ui/feedback";
+import { ImageUpload } from "@/components/ui/image-upload";
+import { Modal } from "@/components/ui/modal";
 import {
   createProduct,
   deleteProduct,
@@ -196,15 +199,17 @@ export default function AdminProductsPage(): JSX.Element {
       />
 
       {categories.length === 0 ? (
-        <p className="mb-5 rounded-md border border-line bg-white px-4 py-3 text-sm font-bold text-ink/68 shadow-soft">
-          {t("admin.products.needCategory")}
-        </p>
+        <Feedback className="mb-5" message={t("admin.products.needCategory")} />
       ) : null}
 
-      {statusMessage ? (
-        <p className="mb-5 rounded-md border border-line bg-white px-4 py-3 text-sm font-bold text-ink/68 shadow-soft">
-          {statusMessage}
-        </p>
+      {statusMessage && statusMessage !== t("admin.products.saveError") ? (
+        <Feedback
+          className="mb-5"
+          message={statusMessage}
+          tone={
+            statusMessage === t("admin.products.saveError") ? "error" : "success"
+          }
+        />
       ) : null}
 
       <section className="rounded-md border border-line bg-white p-5 shadow-soft">
@@ -212,15 +217,14 @@ export default function AdminProductsPage(): JSX.Element {
           <h2 className="text-lg font-black text-ink">
             {t("admin.products.list")}
           </h2>
-          <button
+          <Button
             type="button"
             onClick={openCreateForm}
             disabled={categories.length === 0}
-            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-leaf px-4 py-2 text-sm font-black text-white transition hover:bg-ink disabled:cursor-not-allowed disabled:opacity-60"
           >
             <Plus aria-hidden="true" size={18} />
             {t("admin.products.new")}
-          </button>
+          </Button>
         </div>
 
         <div className="mt-4 grid gap-3">
@@ -251,7 +255,12 @@ export default function AdminProductsPage(): JSX.Element {
                       className="h-16 w-16 rounded-md object-cover"
                     />
                   ) : (
-                    <div className="h-16 w-16 rounded-md border border-line bg-white" />
+                    <div className="flex h-16 w-16 flex-col items-center justify-center rounded-md border border-line bg-white text-ink/35">
+                      <ImageIcon aria-hidden="true" size={18} />
+                      <span className="mt-1 text-sm font-black">
+                        {product.name.trim().charAt(0).toUpperCase()}
+                      </span>
+                    </div>
                   )}
                   <div>
                     <p className="text-base font-black text-ink">{product.name}</p>
@@ -314,34 +323,59 @@ export default function AdminProductsPage(): JSX.Element {
         </div>
       </section>
 
-      {isFormOpen ? (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-ink/40 px-3 py-4 backdrop-blur-sm sm:items-center">
-          <form
-            onSubmit={(event) => event.preventDefault()}
-            className="max-h-[92vh] w-full max-w-2xl overflow-hidden rounded-md border border-line bg-white shadow-soft"
-          >
-            <div className="flex items-start justify-between gap-4 border-b border-line px-5 py-4">
-              <div>
-                <p className="text-xs font-black uppercase text-leaf">
-                  {t("admin.products.stepLabel")} {formStep + 1}/3
-                </p>
-                <h2 className="mt-1 text-lg font-black text-ink">
-                  {editingProduct
-                    ? t("admin.products.edit")
-                    : t("admin.products.new")}
-                </h2>
-              </div>
-              <button
-                type="button"
-                onClick={closeForm}
-                className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-line bg-white text-ink transition hover:border-tomato hover:text-tomato"
-                aria-label={t("admin.common.close")}
-                title={t("admin.common.close")}
-              >
-                <X aria-hidden="true" size={18} />
-              </button>
-            </div>
+      <Modal
+        isOpen={isFormOpen}
+        title={
+          editingProduct ? t("admin.products.edit") : t("admin.products.new")
+        }
+        eyebrow={`${t("admin.products.stepLabel")} ${formStep + 1}/3`}
+        closeLabel={t("admin.common.close")}
+        onClose={closeForm}
+        footer={
+          <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-between">
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() =>
+                formStep === 0 ? closeForm() : setFormStep((step) => step - 1)
+              }
+            >
+              {formStep === 0 ? (
+                t("admin.common.cancel")
+              ) : (
+                <>
+                  <ArrowLeft aria-hidden="true" size={17} />
+                  {t("admin.common.back")}
+                </>
+              )}
+            </Button>
 
+            {formStep < 2 ? (
+              <Button
+                type="button"
+                onClick={() => setFormStep((step) => step + 1)}
+                disabled={
+                  (formStep === 0 && !canGoToStepTwo) ||
+                  (formStep === 1 && !canGoToStepThree)
+                }
+              >
+                {t("admin.common.next")}
+                <ArrowRight aria-hidden="true" size={17} />
+              </Button>
+            ) : (
+              <Button
+                type="button"
+                onClick={() => void handleSave()}
+                disabled={categories.length === 0}
+                isLoading={isSaving}
+              >
+                {isSaving ? t("admin.common.saving") : t("admin.common.save")}
+              </Button>
+            )}
+          </div>
+        }
+      >
+        <form onSubmit={(event) => event.preventDefault()}>
             <div className="grid grid-cols-3 border-b border-line">
               {[
                 t("admin.products.stepDetails"),
@@ -357,6 +391,13 @@ export default function AdminProductsPage(): JSX.Element {
             </div>
 
             <div className="max-h-[62vh] overflow-y-auto px-5 py-5">
+              {statusMessage === t("admin.products.saveError") ? (
+                <Feedback
+                  className="mb-4"
+                  message={statusMessage}
+                  tone="error"
+                />
+              ) : null}
               {formStep === 0 ? (
                 <div className="space-y-4">
                   <label className="block">
@@ -455,28 +496,19 @@ export default function AdminProductsPage(): JSX.Element {
 
               {formStep === 2 ? (
                 <div className="space-y-4">
-                  <label className="block">
-                    <span className="text-sm font-bold text-ink">
-                      {t("admin.products.photo")}
-                    </span>
-                    <span className="mt-2 flex min-h-12 items-center gap-2 rounded-md border border-line bg-cream px-3 text-sm font-semibold text-ink">
-                      <Upload size={18} className="text-ink/50" />
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={(event) =>
-                          setImageFile(event.target.files?.[0] ?? null)
-                        }
-                        className="w-full text-sm"
-                      />
-                    </span>
-                  </label>
-
-                  {imageFile ? (
-                    <p className="rounded-md border border-line bg-cream px-3 py-2 text-xs font-bold text-leaf">
-                      {t("admin.products.photoSelected")}: {imageFile.name}
-                    </p>
-                  ) : null}
+                  <ImageUpload
+                    label={t("admin.products.photo")}
+                    chooseLabel={t("admin.image.choose")}
+                    removeLabel={t("admin.image.remove")}
+                    emptyLabel={t("admin.image.emptyProduct")}
+                    file={imageFile}
+                    currentUrl={form.imageUrl}
+                    aspect="wide"
+                    onFileChange={setImageFile}
+                    onRemove={() =>
+                      setForm((current) => ({ ...current, imageUrl: "" }))
+                    }
+                  />
 
                   <label className="block">
                     <span className="text-sm font-bold text-ink">
@@ -534,51 +566,8 @@ export default function AdminProductsPage(): JSX.Element {
               ) : null}
             </div>
 
-            <div className="flex flex-col-reverse gap-2 border-t border-line px-5 py-4 sm:flex-row sm:justify-between">
-              <button
-                type="button"
-                onClick={() =>
-                  formStep === 0 ? closeForm() : setFormStep((step) => step - 1)
-                }
-                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-line bg-white px-4 py-2 text-sm font-black text-ink transition hover:border-leaf"
-              >
-                {formStep === 0 ? (
-                  t("admin.common.cancel")
-                ) : (
-                  <>
-                    <ArrowLeft aria-hidden="true" size={17} />
-                    {t("admin.common.back")}
-                  </>
-                )}
-              </button>
-
-              {formStep < 2 ? (
-                <button
-                  type="button"
-                  onClick={() => setFormStep((step) => step + 1)}
-                  disabled={
-                    (formStep === 0 && !canGoToStepTwo) ||
-                    (formStep === 1 && !canGoToStepThree)
-                  }
-                  className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-leaf px-4 py-2 text-sm font-black text-white transition hover:bg-ink disabled:cursor-not-allowed disabled:opacity-60"
-                >
-                  {t("admin.common.next")}
-                  <ArrowRight aria-hidden="true" size={17} />
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => void handleSave()}
-                  disabled={isSaving || categories.length === 0}
-                  className="inline-flex min-h-11 items-center justify-center rounded-md bg-leaf px-4 py-2 text-sm font-black text-white transition hover:bg-ink disabled:cursor-not-allowed disabled:opacity-60"
-                >
-                  {isSaving ? t("admin.common.saving") : t("admin.common.save")}
-                </button>
-              )}
-            </div>
           </form>
-        </div>
-      ) : null}
+      </Modal>
     </>
   );
 }

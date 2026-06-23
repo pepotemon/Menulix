@@ -229,6 +229,24 @@ Cada decisão usa o formato:
 
 ---
 
+## [DEC-017] Primitivas locais de UI antes de uma biblioteca externa
+
+**Data**: 2026-06-23
+**Contexto**: Botões, painéis, feedbacks, uploads e modais repetiam classes e
+comportamentos em várias telas do admin.
+**Decisão**: Criar primitivas pequenas em `components/ui/`, mantendo Tailwind,
+Lucide e os tokens existentes. Formulários longos passam a usar modais ou etapas
+quando isso reduz carga cognitiva.
+**Alternativas descartadas**: Adicionar uma biblioteca completa de componentes;
+continuar copiando classes em cada rota; fazer uma refatoração visual sem componentes.
+**Consequências**:
+- Estados de loading, foco, erro e fechamento ficam consistentes
+- Nenhuma dependência adicional entra no bundle
+- Produtos, categorias, aparência e informações seguem o mesmo padrão guiado
+- Novas abstrações só devem ser criadas quando houver repetição real
+
+---
+
 ## Decisões Pendentes
 
 - [ ] Armazenamento de preços: float vs centavos inteiros no Firestore

@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { BadgePercent, CircleSlash2, Minus, Plus } from "lucide-react";
+import { BadgePercent, CircleSlash2, ImageIcon, Minus, Plus } from "lucide-react";
 import { useI18n } from "@/components/language-provider";
 import { useCart } from "@/components/public-menu/cart-provider";
 import type { Product } from "@/types/menu";
@@ -22,13 +22,22 @@ export function ProductCard({ product }: ProductCardProps) {
   return (
     <article className="grid grid-cols-[88px_1fr] gap-3 rounded-lg border border-line bg-white p-3 shadow-sm sm:grid-cols-[120px_1fr] sm:gap-4">
       <div className="relative aspect-square overflow-hidden rounded-md bg-cream">
-        <Image
-          alt={product.name}
-          className="object-cover"
-          fill
-          sizes="(min-width: 640px) 120px, 88px"
-          src={product.imageUrl}
-        />
+        {product.imageUrl ? (
+          <Image
+            alt={product.name}
+            className="object-cover"
+            fill
+            sizes="(min-width: 640px) 120px, 88px"
+            src={product.imageUrl}
+          />
+        ) : (
+          <div className="flex h-full w-full flex-col items-center justify-center gap-1 text-ink/35">
+            <ImageIcon aria-hidden="true" className="h-5 w-5" />
+            <span className="text-lg font-black">
+              {product.name.trim().charAt(0).toUpperCase()}
+            </span>
+          </div>
+        )}
         {product.isFeatured ? (
           <div className="absolute left-2 top-2 rounded-full bg-[var(--restaurant-secondary)] px-2 py-1 text-white">
             <BadgePercent aria-hidden="true" className="h-3.5 w-3.5" />

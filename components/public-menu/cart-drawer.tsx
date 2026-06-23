@@ -1,6 +1,7 @@
 "use client";
 
 import { Minus, Plus, ShoppingBag, X } from "lucide-react";
+import { useEffect } from "react";
 import { useCart } from "@/components/public-menu/cart-provider";
 import { useI18n } from "@/components/language-provider";
 import { trackAnalyticsEvent } from "@/lib/analytics";
@@ -18,6 +19,26 @@ export function CartDrawer({
   const { items, totalPrice, isOpen, closeCart, addItem, removeItem, clearCart } = useCart();
   const { t, language } = useI18n();
 
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    function handleKeyDown(event: KeyboardEvent): void {
+      if (event.key === "Escape") {
+        closeCart();
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [closeCart, isOpen]);
+
   if (!isOpen) return null;
 
   const orderUrl = buildWhatsappOrderUrl(phone, items, language);
@@ -32,7 +53,7 @@ export function CartDrawer({
 
       <aside
         aria-label={t("cart.title")}
-        className="fixed bottom-0 right-0 top-0 z-50 flex w-full max-w-sm flex-col bg-cream shadow-soft"
+        className="fixed bottom-0 right-0 top-0 z-50 flex w-full max-w-sm animate-[slideIn_.2s_ease-out] flex-col bg-cream shadow-soft"
       >
         <div className="flex items-center justify-between border-b border-line px-5 py-4">
           <div className="flex items-center gap-2">
@@ -53,7 +74,8 @@ export function CartDrawer({
               type="button"
               onClick={closeCart}
               className="flex h-8 w-8 items-center justify-center rounded-md text-ink/60 transition hover:bg-line"
-              aria-label="Fechar"
+              aria-label={t("admin.common.close")}
+              title={t("admin.common.close")}
             >
               <X aria-hidden="true" className="h-4 w-4" />
             </button>
