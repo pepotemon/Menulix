@@ -1,12 +1,11 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
-import { ArrowLeft, ArrowRight, Clock3, MapPin, Store } from "lucide-react";
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { useAdminData } from "@/components/admin/admin-data-provider";
 import { useI18n } from "@/components/language-provider";
 import { Button } from "@/components/ui/button";
-import { Feedback } from "@/components/ui/feedback";
+import { useToast } from "@/components/ui/toast";
 import { saveRestaurant, slugifyRestaurantName } from "@/lib/admin-firestore";
 import type { OpeningHours, RestaurantFormInput } from "@/types/menu";
 
@@ -57,6 +56,8 @@ function buildOpeningHours(
 export default function AdminRestaurantPage(): JSX.Element {
   const { restaurant, isLoading, errorMessage, refresh } = useAdminData();
   const { t } = useI18n();
+  const { showToast } = useToast();
+
   const [form, setForm] = useState<RestaurantFormInput>(emptyForm);
   const [weekdaysOpen, setWeekdaysOpen] = useState("");
   const [weekdaysClose, setWeekdaysClose] = useState("");
@@ -64,9 +65,7 @@ export default function AdminRestaurantPage(): JSX.Element {
   const [saturdayClose, setSaturdayClose] = useState("");
   const [sundayOpen, setSundayOpen] = useState("");
   const [sundayClose, setSundayClose] = useState("");
-  const [statusMessage, setStatusMessage] = useState("");
   const [isSaving, setIsSaving] = useState(false);
-  const [formStep, setFormStep] = useState(0);
 
   useEffect(() => {
     if (!restaurant) return;
@@ -98,7 +97,6 @@ export default function AdminRestaurantPage(): JSX.Element {
     if (!restaurant) return;
 
     setIsSaving(true);
-    setStatusMessage("");
 
     try {
       await saveRestaurant(restaurant.id, {
@@ -114,9 +112,9 @@ export default function AdminRestaurantPage(): JSX.Element {
         )
       });
       await refresh();
-      setStatusMessage(t("admin.restaurant.saved"));
+      showToast(t("admin.restaurant.saved"), "success");
     } catch {
-      setStatusMessage(t("admin.restaurant.saveError"));
+      showToast(t("admin.restaurant.saveError"), "error");
     } finally {
       setIsSaving(false);
     }
@@ -131,6 +129,12 @@ export default function AdminRestaurantPage(): JSX.Element {
     );
   }
 
+  const hourRows = [
+    { label: t("admin.restaurant.weekdays"), openVal: weekdaysOpen, setOpen: setWeekdaysOpen, closeVal: weekdaysClose, setClose: setWeekdaysClose },
+    { label: t("admin.restaurant.saturday"), openVal: saturdayOpen, setOpen: setSaturdayOpen, closeVal: saturdayClose, setClose: setSaturdayClose },
+    { label: t("admin.restaurant.sunday"), openVal: sundayOpen, setOpen: setSundayOpen, closeVal: sundayClose, setClose: setSundayClose }
+  ];
+
   return (
     <>
       <AdminPageHeader
@@ -138,294 +142,209 @@ export default function AdminRestaurantPage(): JSX.Element {
         description={t("admin.restaurant.description")}
       />
 
-      {statusMessage ? (
-        <Feedback
-          className="mb-5"
-          message={statusMessage}
-          tone={
-            statusMessage === t("admin.restaurant.saveError") ? "error" : "success"
-          }
-        />
-      ) : null}
-
       <form
         onSubmit={handleSubmit}
-        className="overflow-hidden rounded-md border border-line bg-white shadow-soft"
+        className="space-y-6 rounded-md border border-line bg-white p-5 shadow-soft"
       >
-        <div className="border-b border-line px-5 py-4">
-          <p className="text-xs font-black uppercase text-leaf">
-            {t("admin.restaurant.stepLabel")} {formStep + 1}/3
-          </p>
-          <h2 className="mt-1 text-lg font-black text-ink">
-            {[
-              t("admin.restaurant.stepBasics"),
-              t("admin.restaurant.stepContact"),
-              t("admin.restaurant.stepHours")
-            ][formStep]}
-          </h2>
+        {/* Published */}
+        <label className="flex cursor-pointer items-center justify-between gap-4 rounded-lg border border-line bg-cream px-4 py-3">
+          <span>
+            <span className="block text-sm font-black text-ink">
+              {t("admin.restaurant.published")}
+            </span>
+            <span className="block text-xs font-semibold text-ink/50">
+              {t("admin.restaurant.publishedHelp")}
+            </span>
+          </span>
+          <input
+            type="checkbox"
+            checked={form.isActive}
+            onChange={(event) =>
+              setForm((c) => ({ ...c, isActive: event.target.checked }))
+            }
+            className="h-5 w-5 accent-leaf"
+          />
+        </label>
+
+        {/* Basics */}
+        <div className="space-y-4">
+          <h3 className="text-xs font-bold uppercase tracking-wide text-ink/50">
+            {t("admin.restaurant.stepBasics")}
+          </h3>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <label className="block">
+              <span className="text-sm font-bold text-ink">
+                {t("admin.restaurant.name")} *
+              </span>
+              <input
+                value={form.name}
+                onChange={(event) =>
+                  setForm((c) => ({ ...c, name: event.target.value }))
+                }
+                placeholder="Ex: Pizzaria do Alex"
+                required
+                className="mt-2 min-h-11 w-full rounded-md border border-line bg-cream px-3 text-sm font-semibold text-ink outline-none focus:border-leaf"
+              />
+            </label>
+
+            <label className="block">
+              <span className="text-sm font-bold text-ink">
+                {t("admin.restaurant.slug")} *
+              </span>
+              <input
+                value={form.slug}
+                onChange={(event) =>
+                  setForm((c) => ({ ...c, slug: event.target.value }))
+                }
+                placeholder="pizzaria-do-alex"
+                required
+                className="mt-2 min-h-11 w-full rounded-md border border-line bg-cream px-3 text-sm font-semibold text-ink outline-none focus:border-leaf"
+              />
+            </label>
+          </div>
+
+          <label className="block">
+            <span className="text-sm font-bold text-ink">
+              {t("admin.restaurant.descriptionLabel")}
+            </span>
+            <textarea
+              value={form.description}
+              onChange={(event) =>
+                setForm((c) => ({ ...c, description: event.target.value }))
+              }
+              placeholder="Ex: As melhores pizzas da cidade, feitas no forno a lenha."
+              rows={3}
+              className="mt-2 w-full rounded-md border border-line bg-cream px-3 py-2.5 text-sm font-semibold text-ink outline-none focus:border-leaf"
+            />
+          </label>
         </div>
 
-        <div className="grid grid-cols-3 border-b border-line">
-          {[
-            { label: t("admin.restaurant.stepBasics"), icon: Store },
-            { label: t("admin.restaurant.stepContact"), icon: MapPin },
-            { label: t("admin.restaurant.stepHours"), icon: Clock3 }
-          ].map((step, index) => {
-            const Icon = step.icon;
+        <hr className="border-line" />
 
-            return (
-              <button
-                key={step.label}
-                type="button"
-                onClick={() => setFormStep(index)}
-                className={`flex min-h-14 items-center justify-center gap-2 border-r border-line px-2 text-xs font-black transition last:border-r-0 ${
-                  formStep === index
-                    ? "bg-leaf text-white"
-                    : "bg-cream text-ink/60 hover:text-ink"
-                }`}
-              >
-                <Icon aria-hidden="true" size={16} />
-                <span className="hidden sm:inline">{step.label}</span>
-              </button>
-            );
-          })}
+        {/* Contact */}
+        <div className="space-y-4">
+          <h3 className="text-xs font-bold uppercase tracking-wide text-ink/50">
+            {t("admin.restaurant.stepContact")}
+          </h3>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <label className="block">
+              <span className="text-sm font-bold text-ink">
+                {t("admin.restaurant.whatsapp")}
+              </span>
+              <input
+                value={form.whatsapp}
+                onChange={(event) =>
+                  setForm((c) => ({ ...c, whatsapp: event.target.value }))
+                }
+                placeholder="+55 11 99999-0000"
+                className="mt-2 min-h-11 w-full rounded-md border border-line bg-cream px-3 text-sm font-semibold text-ink outline-none focus:border-leaf"
+              />
+            </label>
+
+            <label className="block">
+              <span className="text-sm font-bold text-ink">
+                {t("admin.restaurant.instagram")}
+              </span>
+              <input
+                value={form.instagram}
+                onChange={(event) =>
+                  setForm((c) => ({ ...c, instagram: event.target.value }))
+                }
+                placeholder="@restaurante"
+                className="mt-2 min-h-11 w-full rounded-md border border-line bg-cream px-3 text-sm font-semibold text-ink outline-none focus:border-leaf"
+              />
+            </label>
+          </div>
+
+          <label className="block">
+            <span className="text-sm font-bold text-ink">
+              {t("admin.restaurant.address")}
+            </span>
+            <input
+              value={form.address}
+              onChange={(event) =>
+                setForm((c) => ({ ...c, address: event.target.value }))
+              }
+              placeholder="Ex: Av. Paulista, 1000"
+              className="mt-2 min-h-11 w-full rounded-md border border-line bg-cream px-3 text-sm font-semibold text-ink outline-none focus:border-leaf"
+            />
+          </label>
+
+          <div className="grid gap-4 md:grid-cols-[1fr_120px]">
+            <label className="block">
+              <span className="text-sm font-bold text-ink">
+                {t("admin.restaurant.city")}
+              </span>
+              <input
+                value={form.city}
+                onChange={(event) =>
+                  setForm((c) => ({ ...c, city: event.target.value }))
+                }
+                placeholder="São Paulo"
+                className="mt-2 min-h-11 w-full rounded-md border border-line bg-cream px-3 text-sm font-semibold text-ink outline-none focus:border-leaf"
+              />
+            </label>
+
+            <label className="block">
+              <span className="text-sm font-bold text-ink">
+                {t("admin.restaurant.state")}
+              </span>
+              <input
+                value={form.state}
+                onChange={(event) =>
+                  setForm((c) => ({ ...c, state: event.target.value }))
+                }
+                placeholder="SP"
+                maxLength={2}
+                className="mt-2 min-h-11 w-full rounded-md border border-line bg-cream px-3 text-sm font-semibold uppercase text-ink outline-none focus:border-leaf"
+              />
+            </label>
+          </div>
         </div>
 
-        <div className="p-5">
-          {formStep === 0 ? (
-            <div className="space-y-4">
-              <label className="flex items-center justify-between gap-4 rounded-md border border-line bg-cream px-4 py-3">
-                <span>
-                  <span className="block text-sm font-black text-ink">
-                    {t("admin.restaurant.published")}
-                  </span>
-                  <span className="block text-xs font-semibold text-ink/50">
-                    {t("admin.restaurant.publishedHelp")}
-                  </span>
-                </span>
-                <input
-                  type="checkbox"
-                  checked={form.isActive}
-                  onChange={(event) =>
-                    setForm((current) => ({
-                      ...current,
-                      isActive: event.target.checked
-                    }))
-                  }
-                  className="h-5 w-5 accent-leaf"
-                />
-              </label>
+        <hr className="border-line" />
 
-              <div className="grid gap-4 md:grid-cols-2">
-                <label className="block">
-                  <span className="text-sm font-bold text-ink">
-                    {t("admin.restaurant.name")}
-                  </span>
+        {/* Hours */}
+        <div className="space-y-3">
+          <h3 className="text-xs font-bold uppercase tracking-wide text-ink/50">
+            {t("admin.restaurant.stepHours")}
+          </h3>
+
+          <div className="grid gap-3 md:grid-cols-3">
+            {hourRows.map((row) => (
+              <div key={row.label} className="rounded-lg border border-line bg-cream p-3">
+                <p className="text-xs font-black text-ink">{row.label}</p>
+                <div className="mt-2 grid grid-cols-2 gap-2">
                   <input
-                    value={form.name}
-                    onChange={(event) =>
-                      setForm((current) => ({
-                        ...current,
-                        name: event.target.value
-                      }))
-                    }
-                    required
-                    className="mt-2 min-h-12 w-full rounded-md border border-line bg-cream px-3 text-sm font-semibold text-ink outline-none focus:border-leaf"
+                    type="time"
+                    value={row.openVal}
+                    onChange={(e) => row.setOpen(e.target.value)}
+                    aria-label={`${row.label} ${t("admin.restaurant.opens")}`}
+                    className="min-h-10 min-w-0 rounded-md border border-line bg-white px-2 text-sm font-semibold text-ink outline-none focus:border-leaf"
                   />
-                </label>
-
-                <label className="block">
-                  <span className="text-sm font-bold text-ink">
-                    {t("admin.restaurant.slug")}
-                  </span>
                   <input
-                    value={form.slug}
-                    onChange={(event) =>
-                      setForm((current) => ({
-                        ...current,
-                        slug: event.target.value
-                      }))
-                    }
-                    required
-                    className="mt-2 min-h-12 w-full rounded-md border border-line bg-cream px-3 text-sm font-semibold text-ink outline-none focus:border-leaf"
+                    type="time"
+                    value={row.closeVal}
+                    onChange={(e) => row.setClose(e.target.value)}
+                    aria-label={`${row.label} ${t("admin.restaurant.closes")}`}
+                    className="min-h-10 min-w-0 rounded-md border border-line bg-white px-2 text-sm font-semibold text-ink outline-none focus:border-leaf"
                   />
-                </label>
-              </div>
-
-              <label className="block">
-                <span className="text-sm font-bold text-ink">
-                  {t("admin.restaurant.descriptionLabel")}
-                </span>
-                <textarea
-                  value={form.description}
-                  onChange={(event) =>
-                    setForm((current) => ({
-                      ...current,
-                      description: event.target.value
-                    }))
-                  }
-                  rows={4}
-                  className="mt-2 w-full rounded-md border border-line bg-cream px-3 py-3 text-sm font-semibold text-ink outline-none focus:border-leaf"
-                />
-              </label>
-            </div>
-          ) : null}
-
-          {formStep === 1 ? (
-            <div className="space-y-4">
-              <div className="grid gap-4 md:grid-cols-2">
-                <label className="block">
-                  <span className="text-sm font-bold text-ink">
-                    {t("admin.restaurant.whatsapp")}
-                  </span>
-                  <input
-                    value={form.whatsapp}
-                    onChange={(event) =>
-                      setForm((current) => ({
-                        ...current,
-                        whatsapp: event.target.value
-                      }))
-                    }
-                    placeholder="+55 11 99999-0000"
-                    className="mt-2 min-h-12 w-full rounded-md border border-line bg-cream px-3 text-sm font-semibold text-ink outline-none focus:border-leaf"
-                  />
-                </label>
-
-                <label className="block">
-                  <span className="text-sm font-bold text-ink">
-                    {t("admin.restaurant.instagram")}
-                  </span>
-                  <input
-                    value={form.instagram}
-                    onChange={(event) =>
-                      setForm((current) => ({
-                        ...current,
-                        instagram: event.target.value
-                      }))
-                    }
-                    placeholder="@restaurante"
-                    className="mt-2 min-h-12 w-full rounded-md border border-line bg-cream px-3 text-sm font-semibold text-ink outline-none focus:border-leaf"
-                  />
-                </label>
-              </div>
-
-              <label className="block">
-                <span className="text-sm font-bold text-ink">
-                  {t("admin.restaurant.address")}
-                </span>
-                <input
-                  value={form.address}
-                  onChange={(event) =>
-                    setForm((current) => ({
-                      ...current,
-                      address: event.target.value
-                    }))
-                  }
-                  className="mt-2 min-h-12 w-full rounded-md border border-line bg-cream px-3 text-sm font-semibold text-ink outline-none focus:border-leaf"
-                />
-              </label>
-
-              <div className="grid gap-4 md:grid-cols-[1fr_120px]">
-                <label className="block">
-                  <span className="text-sm font-bold text-ink">
-                    {t("admin.restaurant.city")}
-                  </span>
-                  <input
-                    value={form.city}
-                    onChange={(event) =>
-                      setForm((current) => ({
-                        ...current,
-                        city: event.target.value
-                      }))
-                    }
-                    className="mt-2 min-h-12 w-full rounded-md border border-line bg-cream px-3 text-sm font-semibold text-ink outline-none focus:border-leaf"
-                  />
-                </label>
-
-                <label className="block">
-                  <span className="text-sm font-bold text-ink">
-                    {t("admin.restaurant.state")}
-                  </span>
-                  <input
-                    value={form.state}
-                    onChange={(event) =>
-                      setForm((current) => ({
-                        ...current,
-                        state: event.target.value
-                      }))
-                    }
-                    maxLength={2}
-                    className="mt-2 min-h-12 w-full rounded-md border border-line bg-cream px-3 text-sm font-semibold uppercase text-ink outline-none focus:border-leaf"
-                  />
-                </label>
-              </div>
-            </div>
-          ) : null}
-
-          {formStep === 2 ? (
-            <div className="grid gap-4 md:grid-cols-3">
-              {[
-                [t("admin.restaurant.weekdays"), weekdaysOpen, setWeekdaysOpen, weekdaysClose, setWeekdaysClose],
-                [t("admin.restaurant.saturday"), saturdayOpen, setSaturdayOpen, saturdayClose, setSaturdayClose],
-                [t("admin.restaurant.sunday"), sundayOpen, setSundayOpen, sundayClose, setSundayClose]
-              ].map(([label, openValue, setOpen, closeValue, setClose]) => (
-                <div key={label as string} className="rounded-md border border-line bg-cream p-4">
-                  <p className="text-sm font-black text-ink">{label as string}</p>
-                  <div className="mt-3 grid grid-cols-2 gap-2">
-                    <input
-                      type="time"
-                      value={openValue as string}
-                      onChange={(event) =>
-                        (setOpen as (value: string) => void)(event.target.value)
-                      }
-                      aria-label={`${label as string} ${t("admin.restaurant.opens")}`}
-                      className="min-h-11 min-w-0 rounded-md border border-line bg-white px-2 text-sm font-semibold text-ink outline-none focus:border-leaf"
-                    />
-                    <input
-                      type="time"
-                      value={closeValue as string}
-                      onChange={(event) =>
-                        (setClose as (value: string) => void)(event.target.value)
-                      }
-                      aria-label={`${label as string} ${t("admin.restaurant.closes")}`}
-                      className="min-h-11 min-w-0 rounded-md border border-line bg-white px-2 text-sm font-semibold text-ink outline-none focus:border-leaf"
-                    />
-                  </div>
-                  <div className="mt-2 grid grid-cols-2 gap-2 text-center text-xs font-semibold text-ink/50">
-                    <span>{t("admin.restaurant.opens")}</span>
-                    <span>{t("admin.restaurant.closes")}</span>
-                  </div>
                 </div>
-              ))}
-            </div>
-          ) : null}
+                <div className="mt-1.5 grid grid-cols-2 gap-2 text-center text-[10px] font-semibold text-ink/40">
+                  <span>{t("admin.restaurant.opens")}</span>
+                  <span>{t("admin.restaurant.closes")}</span>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
-        <div className="flex flex-col-reverse gap-2 border-t border-line px-5 py-4 sm:flex-row sm:justify-between">
-          <Button
-            type="button"
-            variant="secondary"
-            disabled={formStep === 0}
-            onClick={() => setFormStep((step) => Math.max(0, step - 1))}
-          >
-            <ArrowLeft aria-hidden="true" size={17} />
-            {t("admin.common.back")}
+        <div className="border-t border-line pt-4">
+          <Button type="submit" isLoading={isSaving}>
+            {isSaving ? t("admin.common.saving") : t("admin.restaurant.save")}
           </Button>
-
-          {formStep < 2 ? (
-            <Button
-              type="button"
-              disabled={formStep === 0 && !form.name.trim()}
-              onClick={() => setFormStep((step) => Math.min(2, step + 1))}
-            >
-              {t("admin.common.next")}
-              <ArrowRight aria-hidden="true" size={17} />
-            </Button>
-          ) : (
-            <Button type="submit" isLoading={isSaving}>
-              {isSaving ? t("admin.common.saving") : t("admin.restaurant.save")}
-            </Button>
-          )}
         </div>
       </form>
     </>

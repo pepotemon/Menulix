@@ -20,12 +20,15 @@ const EMPTY_ANALYTICS: AnalyticsSummary = {
   recentEvents: []
 };
 
+const INITIAL_EVENTS_COUNT = 8;
+
 export default function AdminAnalyticsPage(): JSX.Element {
   const { restaurant, isLoading: isMenuLoading, errorMessage } = useAdminData();
   const { language, t } = useI18n();
   const [analytics, setAnalytics] = useState<AnalyticsSummary>(EMPTY_ANALYTICS);
   const [isLoading, setIsLoading] = useState(false);
   const [loadError, setLoadError] = useState("");
+  const [showAllEvents, setShowAllEvents] = useState(false);
 
   useEffect(() => {
     if (!restaurant) return;
@@ -34,7 +37,6 @@ export default function AdminAnalyticsPage(): JSX.Element {
     async function loadAnalytics(): Promise<void> {
       setIsLoading(true);
       setLoadError("");
-
       try {
         const data = await getRestaurantAnalytics(restaurantId);
         setAnalytics(data);
@@ -58,27 +60,16 @@ export default function AdminAnalyticsPage(): JSX.Element {
   }
 
   const cards = [
-    {
-      label: t("admin.analytics.menuViews"),
-      value: analytics.menuViews,
-      icon: Eye
-    },
-    {
-      label: t("admin.analytics.productClicks"),
-      value: analytics.productClicks,
-      icon: MousePointerClick
-    },
-    {
-      label: t("admin.analytics.whatsappClicks"),
-      value: analytics.whatsappClicks,
-      icon: MessageCircle
-    },
-    {
-      label: t("admin.analytics.ordersSent"),
-      value: analytics.cartOrdersSent,
-      icon: Send
-    }
+    { label: t("admin.analytics.menuViews"), value: analytics.menuViews, icon: Eye },
+    { label: t("admin.analytics.productClicks"), value: analytics.productClicks, icon: MousePointerClick },
+    { label: t("admin.analytics.whatsappClicks"), value: analytics.whatsappClicks, icon: MessageCircle },
+    { label: t("admin.analytics.ordersSent"), value: analytics.cartOrdersSent, icon: Send }
   ];
+
+  const visibleEvents = showAllEvents
+    ? analytics.recentEvents
+    : analytics.recentEvents.slice(0, INITIAL_EVENTS_COUNT);
+  const hiddenCount = analytics.recentEvents.length - INITIAL_EVENTS_COUNT;
 
   return (
     <>
@@ -93,99 +84,116 @@ export default function AdminAnalyticsPage(): JSX.Element {
         </p>
       ) : null}
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      {/* Metric cards */}
+      <div className="grid grid-cols-2 gap-2 xl:grid-cols-4">
         {cards.map((card) => {
           const Icon = card.icon;
-
           return (
-            <section
+            <div
               key={card.label}
-              className="rounded-md border border-line bg-white p-5 shadow-soft"
+              className="rounded-lg border border-line bg-white px-4 py-3"
             >
-              <div className="flex items-center justify-between gap-3">
-                <p className="text-sm font-bold text-ink/50">{card.label}</p>
-                <Icon aria-hidden="true" className="h-5 w-5 text-leaf" />
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-xs font-semibold text-ink/50">{card.label}</p>
+                <Icon aria-hidden="true" className="h-4 w-4 text-leaf" />
               </div>
-              <p className="mt-3 text-3xl font-black text-ink">
-                {isLoading ? "..." : card.value}
+              <p className="mt-1.5 text-2xl font-black text-ink">
+                {isLoading ? "—" : card.value}
               </p>
-            </section>
+            </div>
           );
         })}
       </div>
 
-      <div className="mt-6 grid gap-4 lg:grid-cols-[1fr_360px]">
+      {/* Revenue + Top products */}
+      <div className="mt-4 grid gap-4 lg:grid-cols-[1fr_280px]">
         <section className="rounded-md border border-line bg-white p-5 shadow-soft">
           <div className="flex items-center gap-2">
-            <BarChart3 aria-hidden="true" className="h-5 w-5 text-leaf" />
-            <h2 className="text-base font-black text-ink">
+            <BarChart3 aria-hidden="true" className="h-4 w-4 text-leaf" />
+            <h2 className="text-sm font-black text-ink">
               {t("admin.analytics.topProducts")}
             </h2>
           </div>
 
           {analytics.topProducts.length > 0 ? (
-            <ol className="mt-4 space-y-3">
+            <ol className="mt-3 space-y-2">
               {analytics.topProducts.map((product, index) => (
                 <li
                   key={product.productId}
-                  className="flex items-center justify-between gap-3 rounded-md border border-line bg-cream px-4 py-3"
+                  className="flex items-center justify-between gap-3 rounded-md border border-line bg-cream px-3 py-2.5"
                 >
-                  <div className="min-w-0">
-                    <p className="text-sm font-black text-ink">
-                      {index + 1}. {product.productName}
-                    </p>
-                    <p className="text-xs font-semibold text-ink/50">
-                      {product.clicks} {t("admin.analytics.clicks")}
-                    </p>
-                  </div>
+                  <p className="text-sm font-black text-ink">
+                    {index + 1}. {product.productName}
+                  </p>
+                  <p className="shrink-0 text-xs font-semibold text-ink/50">
+                    {product.clicks} {t("admin.analytics.clicks")}
+                  </p>
                 </li>
               ))}
             </ol>
           ) : (
-            <p className="mt-4 text-sm font-semibold text-ink/50">
+            <p className="mt-3 text-sm font-semibold text-ink/50">
               {t("admin.analytics.emptyProducts")}
             </p>
           )}
         </section>
 
         <section className="rounded-md border border-line bg-white p-5 shadow-soft">
-          <p className="text-sm font-bold text-ink/50">
+          <p className="text-xs font-semibold text-ink/50">
             {t("admin.analytics.estimatedRevenue")}
           </p>
-          <p className="mt-2 text-3xl font-black text-ink">
+          <p className="mt-1.5 text-2xl font-black text-ink">
             {formatCurrencyBRL(analytics.estimatedRevenue)}
           </p>
-          <p className="mt-3 text-sm leading-relaxed text-ink/60">
+          <p className="mt-2 text-xs leading-relaxed text-ink/55">
             {t("admin.analytics.estimatedRevenueHelp")}
           </p>
         </section>
       </div>
 
-      <section className="mt-6 rounded-md border border-line bg-white p-5 shadow-soft">
-        <h2 className="text-base font-black text-ink">
+      {/* Recent activity */}
+      <section className="mt-4 rounded-md border border-line bg-white shadow-soft">
+        <h2 className="border-b border-line px-5 py-4 text-sm font-black text-ink">
           {t("admin.analytics.recentActivity")}
         </h2>
 
         {analytics.recentEvents.length > 0 ? (
-          <ul className="mt-4 divide-y divide-line">
-            {analytics.recentEvents.map((event) => (
-              <li key={event.id} className="flex items-center justify-between gap-3 py-3">
-                <div className="min-w-0">
-                  <p className="text-sm font-bold text-ink">
-                    {getEventLabel(event.type, t)}
-                  </p>
-                  <p className="truncate text-xs font-semibold text-ink/50">
-                    {getEventDetail(event, t)}
-                  </p>
-                </div>
-                <time className="shrink-0 text-xs font-semibold text-ink/40">
-                  {formatEventDate(event.createdAt, language)}
-                </time>
-              </li>
-            ))}
-          </ul>
+          <>
+            <ul className="divide-y divide-line">
+              {visibleEvents.map((event) => (
+                <li
+                  key={event.id}
+                  className="flex items-center justify-between gap-3 px-5 py-3"
+                >
+                  <div className="min-w-0">
+                    <p className="text-sm font-bold text-ink">
+                      {getEventLabel(event.type, t)}
+                    </p>
+                    <p className="truncate text-xs font-semibold text-ink/50">
+                      {getEventDetail(event, t)}
+                    </p>
+                  </div>
+                  <time className="shrink-0 text-xs font-semibold text-ink/40">
+                    {formatEventDate(event.createdAt, language)}
+                  </time>
+                </li>
+              ))}
+            </ul>
+
+            {!showAllEvents && hiddenCount > 0 && (
+              <div className="border-t border-line px-5 py-3">
+                <button
+                  type="button"
+                  onClick={() => setShowAllEvents(true)}
+                  className="text-sm font-bold text-leaf transition hover:text-ink"
+                >
+                  {t("admin.analytics.loadMore")} ({hiddenCount})
+                </button>
+              </div>
+            )}
+          </>
         ) : (
-          <p className="mt-4 text-sm font-semibold text-ink/50">
+          <p className="px-5 py-6 text-sm font-semibold text-ink/50">
             {t("admin.analytics.emptyActivity")}
           </p>
         )}

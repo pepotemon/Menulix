@@ -17,6 +17,15 @@ const config: Config = {
       },
       boxShadow: {
         soft: "0 18px 50px rgba(30, 37, 40, 0.12)"
+      },
+      keyframes: {
+        "toast-in": {
+          from: { opacity: "0", transform: "translateY(6px) scale(0.96)" },
+          to: { opacity: "1", transform: "translateY(0) scale(1)" }
+        }
+      },
+      animation: {
+        "toast-in": "toast-in 0.18s ease-out"
       }
     }
   },
