@@ -19,6 +19,7 @@
 | [[07_Prompts]] | Prompts para IA | Prompts úteis para Claude Code |
 | [[08_Workflows]] | Fluxos de Trabalho | Como executar tarefas comuns |
 | [[09_Glossary]] | Glossário | Termos e conceitos do domínio |
+| [[10_UI_Style]] | UI, Componentes e Estilo | Referência visual e padrões de interação |
 
 ---
 
@@ -53,6 +54,7 @@ Deploy:        Vercel (variáveis de ambiente pendentes de configuração)
 - Next.js 14 App Router → [[02_Architecture#Stack]]
 - TypeScript Strict → [[02_Architecture#TypeScript]]
 - Tailwind CSS + Design Tokens → [[02_Architecture#Design System]]
+- UI e componentes → [[10_UI_Style]]
 
 ### Domínio
 - Modelo de dados → [[02_Architecture#Data Model]]

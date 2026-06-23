@@ -31,6 +31,32 @@ O que isso afeta.
 
 ---
 
+### [2026-06-23] Documentação - guia de UI, componentes e estilo
+
+**Fase**: Transversal
+**Tipo**: docs
+**Arquivos criados/modificados**:
+- `docs-obsidian/10_UI_Style.md`
+- `docs-obsidian/00_Index.md`
+- `docs-obsidian/06_Changelog.md`
+
+**O que mudou**:
+Foi criada uma referência única para a interface atual do Menulix. O documento
+registra identidade visual, layout responsivo, navegação, componentes, formulários
+guiados, cardápio público, estados obrigatórios e pendências do sistema de UI.
+
+**Por que**:
+Os padrões visuais estavam distribuídos entre Tailwind, componentes e notas de
+arquitetura. A guia reduz inconsistências e ajuda futuras mudanças a preservar a
+simplicidade do painel e a personalização do cardápio.
+
+**Impacto**:
+- Novas telas passam a ter uma referência concreta de medidas e comportamento
+- Diferencia padrões implementados de melhorias ainda pendentes
+- Mantém a regra obrigatória de textos PT-BR e espanhol
+
+---
+
 ### [2026-06-22] UX admin — aparência guiada com prévia em tempo real
 
 **Fase**: FASE 3
