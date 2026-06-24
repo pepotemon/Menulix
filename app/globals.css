@@ -47,3 +47,12 @@ textarea,
 select {
   font: inherit;
 }
+
+@layer components {
+  .edit-overlay-btn {
+    @apply flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-ink shadow-md backdrop-blur-sm transition hover:bg-white hover:text-leaf focus-visible:outline-none;
+  }
+  .edit-overlay-btn-sm {
+    @apply flex h-7 w-7 items-center justify-center rounded-full bg-white/90 text-ink/60 shadow-sm backdrop-blur-sm transition hover:bg-white hover:text-leaf focus-visible:outline-none;
+  }
+}

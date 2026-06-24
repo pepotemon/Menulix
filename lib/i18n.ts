@@ -23,6 +23,7 @@ export const dictionary = {
     "admin.nav.analytics": "Estatísticas",
     "admin.nav.analytics.short": "Stats",
     "admin.nav.logout": "Sair",
+    "admin.nav.logoutConfirm": "Tem certeza que quer sair da sessão?",
     "admin.loading": "Carregando painel...",
     "admin.dashboard.title": "Meu cardápio",
     "admin.dashboard.description":
@@ -278,6 +279,7 @@ export const dictionary = {
     "admin.nav.analytics": "Estadísticas",
     "admin.nav.analytics.short": "Stats",
     "admin.nav.logout": "Salir",
+    "admin.nav.logoutConfirm": "¿Seguro que quieres salir de la sesión?",
     "admin.loading": "Cargando panel...",
     "admin.dashboard.title": "Mi menú",
     "admin.dashboard.description":

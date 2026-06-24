@@ -42,6 +42,7 @@ export function AdminShell({ children }: AdminShellProps): JSX.Element {
   }, [isLoading, isLoginPage, router, user]);
 
   async function handleSignOut(): Promise<void> {
+    if (!window.confirm(t("admin.nav.logoutConfirm"))) return;
     await signOutUser();
     router.replace("/admin/login");
   }
